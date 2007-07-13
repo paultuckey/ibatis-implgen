@@ -1,0 +1,45 @@
+<project name="ibatis-implgen" default="dist" basedir=".">
+
+    <property name="app.version" value="0.0.1"/>
+
+    <path id="compile.classpath">
+        <fileset dir="lib/" includes="*.jar"/>
+    </path>
+
+    <path id="annotation-classpath">
+        <fileset file="dist/ibatis-implgen-${app.version}.jar"/>
+        <fileset file="${java.home}/lib/tools.jar"/>
+        <fileset file="lib/ibatis-2.3.0.677.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="build"/>
+        <delete dir="dist"/>
+    </target>
+
+    <target name="prepare">
+        <mkdir dir="build/classes"/>
+        <mkdir dir="dist/"/>
+        <mkdir dir="build/generated"/>
+    </target>
+
+    <target name="compile" depends="prepare">
+        <taskdef name="jsptem" classname="org.tuckey.jsptem.JspTemAntTask" classpath="lib/jsptem-0.6.jar"/>
+        <jsptem srcdir="src" destdir="src" listfiles="true"/>
+
+        <javac srcdir="src/" destdir="build/classes/" classpathref="compile.classpath"
+               excludes="**/generated/*" debug="true" target="1.5" source="1.5"/>
+    </target>
+
+    <target name="dist" depends="clean,compile" description="Build distribution">
+        <jar jarfile="dist/ibatis-implgen-${app.version}.jar" basedir="build/classes"/>
+    </target>
+
+    <target name="generate-example" depends="dist" description="Generated implementations of example Dao">
+        <apt srcdir="src" preprocessdir="build/generated"
+             classpathref="annotation-classpath" compile="false" debug="true"
+             factory="org.tuckey.ibatis.implgen.IbatisImplGenAnnotationProcessor"
+             includes="**/example/*"/>
+    </target>
+
+</project>
