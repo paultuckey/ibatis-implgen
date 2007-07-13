@@ -59,19 +59,19 @@
 
         <% } else if ( Update.class.equals(method.getTypeClass()) ) { %>
     <update id="<%= method.getName() %>" <%--
-                --%><% if ( ! method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
+                --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </update>
 
         <% } else if ( Delete.class.equals(method.getTypeClass()) ) { %>
     <delete id="<%= method.getName() %>" <%--
-            --%><% if ( ! method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>   >
+            --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>   >
         <%= method.getSqlEscaped() %>
     </delete>
 
         <% } else if ( Insert.class.equals(method.getTypeClass()) ) { %>
     <insert id="<%= method.getName() %>" <%--
-            --%><% if ( ! method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
+            --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </insert>
 
