@@ -48,7 +48,6 @@ public class ParsedClass {
     private List<ParsedCacheModel> cacheModels = new ArrayList<ParsedCacheModel>();
     private List<ParsedResultMap> resultMaps = new ArrayList<ParsedResultMap>();
     private File classFile;
-    private String implementsOrExtends;
     private boolean classIsInterface;
 
     public String getName() {

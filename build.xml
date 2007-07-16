@@ -1,6 +1,6 @@
 <project name="ibatis-implgen" default="dist" basedir=".">
 
-    <property name="app.version" value="0.0.1"/>
+    <property name="app.version" value="0.0.2"/>
 
     <path id="compile.classpath">
         <fileset dir="lib/" includes="*.jar"/>
@@ -39,7 +39,9 @@
         <apt srcdir="src" preprocessdir="build/generated"
              classpathref="annotation-classpath" compile="false" debug="true"
              factory="org.tuckey.ibatis.implgen.IbatisImplGenAnnotationProcessor"
-             includes="**/example/*"/>
+             includes="**/example/*">
+            <option name="debug" value="true"/>
+        </apt>
     </target>
 
 </project>

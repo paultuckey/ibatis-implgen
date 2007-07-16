@@ -34,6 +34,8 @@
  */
 package org.tuckey.ibatis.implgen;
 
+import java.util.regex.Pattern;
+
 
 public class Util {
 
@@ -73,5 +75,38 @@ public class Util {
         }
         return b.toString();
     }
+
+
+    public static boolean sqlStartsWithKeyword(String keyword, String sql) {
+        Pattern keywordPattern = Pattern.compile("^[^\\w]*" + keyword + ".*$", Pattern.CASE_INSENSITIVE + Pattern.MULTILINE);
+        return keywordPattern.matcher(sql).matches();
+    }
+
+
+    public static Log getLog() {
+        return new Log();
+    }
+
+    /**
+     * Quick and dirty logger (so that we don't have to have log4j in classpath)
+     */
+    static class Log {
+        private boolean debugEnabled = false;
+
+        public void debug(String s) {
+            if (!debugEnabled) return;
+            System.out.println("DEBUG: " + s);
+        }
+
+        public void info(String s) {
+            System.out.println("INFO: " + s);
+        }
+
+        public void setDebug(boolean b) {
+            debugEnabled = b;
+        }
+    }
+
+
 
 }

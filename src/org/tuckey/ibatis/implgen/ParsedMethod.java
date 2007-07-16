@@ -34,20 +34,27 @@
  */
 package org.tuckey.ibatis.implgen;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class ParsedMethod {
+public class ParsedMethod implements Comparable<ParsedMethod> {
 
-    private Class typeClass;
+    public enum Type {
+        SELECT, STATEMENT, INSERT, UPDATE, DELETE, PROCEDURE
+    }
 
     private String name;
     private String sql;
-    private List<ParsedParam> params;
+    private List<ParsedParam> params = new ArrayList<ParsedParam>();
     private String returns;
     private String returnsType;
     private String cacheModel;
     private String resultMap;
+    private Type type;
+
+    private int line;
+    private int column;
 
     public String getName() {
         return name;
@@ -85,12 +92,12 @@ public class ParsedMethod {
         this.returns = returns;
     }
 
-    public Class getTypeClass() {
-        return typeClass;
+    public Type getType() {
+        return type;
     }
 
-    public void setTypeClass(Class typeClass) {
-        this.typeClass = typeClass;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public boolean isReturnsVoid() {
@@ -156,4 +163,34 @@ public class ParsedMethod {
     public boolean isAnyParameterClass() {
         return params.size() > 0;
     }
+
+    public String toString() {
+        return name + " " + line + ":" + column;
+    }
+
+    public int compareTo(ParsedMethod other) {
+        int result = 0;
+        if (line > other.line) result = 1;
+        else if (line < other.line) result = -1;
+        else if (column > other.column) result = 1;
+        else if (column < other.column) result = -1;
+        return result;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
+
 }
