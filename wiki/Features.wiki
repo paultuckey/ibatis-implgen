@@ -1,0 +1,13 @@
+#labels Featured
+= SQL Detection =
+
+Code with no annotation can be specified.  The sql will be parsed and whatever SQL keyword it starts with the type will be automatically set.
+
+{{{
+    public List<String> getNames(Long id) throws SQLException /*sql{
+
+        SELECT name from blah where x = #id#
+
+    }*/;
+}}}
+
