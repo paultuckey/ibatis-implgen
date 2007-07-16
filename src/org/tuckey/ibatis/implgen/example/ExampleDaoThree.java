@@ -16,7 +16,7 @@ public interface ExampleDaoThree {
 
     public List<String> getNames(Long id) throws SQLException /*sql{
 
-        SELECT name from blah where x = #id#
+        SELECT name FROM blah WHERE id = #id#
 
     }*/;
 
