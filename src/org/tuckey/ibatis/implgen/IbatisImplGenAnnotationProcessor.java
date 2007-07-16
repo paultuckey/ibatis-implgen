@@ -73,7 +73,7 @@ import java.util.Set;
 
 
 /**
- * Annotation processor that implements annotated Interface's with SQL in comments as an IBatis SQLMap Class and XML
+ * Annotation processor that implements annotated Interface's with SQL in comments as an iBATIS SQLMap Class and XML
  * file.
  *
  * @see org.tuckey.ibatis.implgen.example.ExampleDaoOne
