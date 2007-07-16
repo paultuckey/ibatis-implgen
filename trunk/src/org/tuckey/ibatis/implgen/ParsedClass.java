@@ -113,4 +113,11 @@ public class ParsedClass {
     public void setClassIsInterface(boolean classIsInterface) {
         this.classIsInterface = classIsInterface;
     }
+
+    public boolean isAnySQLMethods() {
+        for (ParsedMethod method : methods) {
+            if ( method.getSql() != null && method.getSql().length() > 0 ) return true;
+        }
+        return false;
+    }
 }

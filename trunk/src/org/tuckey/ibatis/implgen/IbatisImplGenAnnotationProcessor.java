@@ -70,6 +70,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 
 
 /**
@@ -106,6 +107,8 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         }
         try {
 
+            HashMap<String, List<ParsedClass>> packages = new HashMap<String, List<ParsedClass>>();
+
             for (TypeDeclaration typeDecl : env.getSpecifiedTypeDeclarations()) {
                 log.debug("processing type " + typeDecl);
 
@@ -138,7 +141,34 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 }
 
                 // output files for the class
-                processClass(parsedClass);
+                if ( parsedClass.isAnySQLMethods() ) processClass(parsedClass);
+
+                List<ParsedClass> classList = packages.get(typeDecl.getPackage().getQualifiedName());
+                if ( classList == null ) {
+                    classList = new ArrayList<ParsedClass>();
+                    packages.put(typeDecl.getPackage().getQualifiedName(), classList);
+                }
+                if ( parsedClass.isAnySQLMethods() ) classList.add(parsedClass);
+            }
+
+            // for each package outout:
+            for (List<ParsedClass> classes : packages.values()) {
+                if ( classes.size() == 0 ) continue;
+                PrintWriter daoXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
+                        new File("GeneratedDaoSnippet.xml"), null);
+                PrintWriter sqlMapXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
+                        new File("GeneratedSqlMapSnippet.xml"), null);
+                // write header
+                daoXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS DAO config -->");
+                sqlMapXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS SqlMap config -->");
+                // write a line for each impl we generated
+                for (ParsedClass parsedClass : classes) {
+                    daoXmlFileWriter.println("<dao interface=\""+ parsedClass.getFullyQualifiedName() + "\" " +
+                            "implementation=\""+ parsedClass.getGeneratedJavaClassFullyQualifiedName() + "\"/>");
+                    sqlMapXmlFileWriter.println("<sqlMap resource=\""+parsedClass.getGeneratedXmlFilePath() + "\"/>");
+                }
+                daoXmlFileWriter.close();
+                sqlMapXmlFileWriter.close();
             }
 
         } catch (IOException e) {
