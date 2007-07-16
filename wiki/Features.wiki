@@ -1,7 +1,7 @@
 #labels Featured
 = SQL Detection =
 
-Code with no annotation can be specified.  The sql will be parsed and whatever SQL keyword it starts with the type will be automatically set.
+Code with no annotation can be specified.  The SQL is parsed and whatever SQL keyword it begins starts with, the type will be automatically set (note, the default is Statement if the detection routine cannot detect a type).
 
 {{{
     public List<String> getNames(Long id) throws SQLException /*sql{
