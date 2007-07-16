@@ -6,8 +6,13 @@ Code with no annotation can be specified.  The sql will be parsed and whatever S
 {{{
     public List<String> getNames(Long id) throws SQLException /*sql{
 
-        SELECT name from blah where x = #id#
+        SELECT name FROM blah WHERE id = #id#
+
+    }*/;
+
+    public void updateSomeTable(Long id, String colValue) throws SQLException /*sql{
+
+        UPDATE table SET col = #colValue# WHERE id = #id#
 
     }*/;
 }}}
-
