@@ -38,6 +38,9 @@ import org.tuckey.ibatis.implgen.annotations.Update;
 
 import java.sql.SQLException;
 
+/**
+ * Exampe showing use of abstract class.
+ */
 public abstract class ExampleDaoTwo {
 
     /**
