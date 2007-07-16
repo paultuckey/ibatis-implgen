@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd"
+[
+    <!ENTITY included SYSTEM "GeneratedSqlMapSnippet.xml">
+] >
+
+<!--
+
+    EXAMPLE only, use a real transaction manager!
+
+ -->
+
+<sqlMapConfig>
+
+    <settings
+        cacheModelsEnabled="true"
+        enhancementEnabled="true"
+        errorTracingEnabled="true"
+        useStatementNamespaces="true"/>
+
+    <transactionManager type="JDBC">
+        <dataSource type="JNDI">
+            <property name="DBInitialContext" value="java:comp/env"/>
+            <property name="DBLookup" value="/jdbc/database"/>
+        </dataSource>
+    </transactionManager>
+
+    &included;
+
+</sqlMapConfig>
