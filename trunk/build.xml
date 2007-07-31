@@ -23,10 +23,12 @@
         <mkdir dir="build/generated"/>
     </target>
 
-    <target name="compile" depends="prepare">
+    <target name="compile-jsp-templates">
         <taskdef name="jsptem" classname="org.tuckey.jsptem.JspTemAntTask" classpath="lib/jsptem-0.6.jar"/>
         <jsptem srcdir="src" destdir="src" listfiles="true"/>
+    </target>
 
+    <target name="compile" depends="prepare">
         <javac srcdir="src/" destdir="build/classes/" classpathref="compile.classpath"
                excludes="**/generated/*" debug="true" target="1.5" source="1.5"/>
     </target>
