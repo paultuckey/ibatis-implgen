@@ -1,13 +1,30 @@
-#summary One-sentence summary of this page.
+#summary General overview and reasoning
 
-= Introduction =
+= Simplify the use SQL in Java =
 
-Add your content here.
+A typical J2EE web application developer needs the following skills:
+  * CSS
+  * JavaScript
+  * HTML
+  * JSP Expression Language (EL)
+  * JSTL (probably plus many other taglibs)
+  * MVC Framework (struts etc)
+  * Java
+  * Persistence Framework
+  * SQL
+
+This is not exactly a short list. It would be goot to try and reduce this
+(and not create a new language or framework in the process)
+
+== Requirements: ==
+
+  * Ability to easily cut and paste SQL into "proper" sql development tool (Toad, Embarcadero etc).
+  * Don't repeat marshaling instructions
+
+<p class="question">I want my DBA/SQL team to write sql for java app why would I want to put SQL in java files.</p>
+
+<p class="answer">Use stored procedures or functions.
+    This creates a very clear definition between teams.
+    The Java team can maintain the calls to the procs and the SQL team the procs themselves.</p>
 
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
