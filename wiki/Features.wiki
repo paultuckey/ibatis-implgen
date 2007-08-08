@@ -1,6 +1,17 @@
 #labels Featured
 = Annotation Based iBATIS configuration =
 
+
+
+  * Generate iBATIS xml file and implementation class from an annotated java interface or abstract class
+<!--
+  * Stored procedure parser (for Sybase) to generate:
+        # Annotated java interface for calling procs
+        # HTML documentation
+-->
+  * Migration code for existing XML SqlMap config files
+
+
 Hopefully this example is self-explanatory.
 
 
