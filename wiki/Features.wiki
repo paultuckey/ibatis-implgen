@@ -1,7 +1,7 @@
 #labels Featured
 = Annotation Based iBATIS configuration =
 
-Hopefully this example is fairly self-explanatory.
+Hopefully this example is self-explanatory.
 
 
 {{{
