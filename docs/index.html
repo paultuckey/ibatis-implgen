@@ -1,0 +1,53 @@
+<html>
+<body>
+
+
+<h1>Simplify the use SQL in Java</h1>
+
+<p>A typical J2EE web application developer needs the following skills:</p>
+
+<ul>
+    <li>CSS</li>
+    <li>JavaScript</li>
+    <li>HTML</li>
+    <li>JSP Expression Language (EL)</li>
+    <li>JSTL (probably plus many other taglibs)</li>
+    <li>MVC Framework (struts etc)</li>
+    <li>Java</li>
+    <li>Persistence Framework</li>
+    <li>SQL</li>
+</ul>
+
+<p>This is not exactly a short list. It would be goot to try and reduce this
+    (and not create a new language or framework in the process)</p>
+
+<p>Requirements:</p>
+
+<ul>
+    <li>Ability to easily cut and paste SQL into "proper" sql development tool (Toad, Embarcadero etc).</li>
+    <li>Don't repeat marshaling instructions</li>
+</ul>
+
+
+<h2>Features</h2>
+
+<ol>
+    <li>Generate iBATIS xml file and implementation class from an annotated java interface or abstract class</li>
+    <li>Stored procedure parser (for Sybase) to generate:
+        <ul>
+            <li>Annotated java interface for calling procs</li>
+            <li>HTML documentation</li>
+        </ul>
+    </li>
+    <li>Migration code for existing XML SqlMap config files</li>
+</ol>
+
+<p class="question">I want my DBA/SQL team to write sql for java app why would I want to put SQL in java files.</p>
+
+<p class="answer">Use stored procedures or functions.
+    This creates a very clear definition between teams.
+    The Java team can maintain the calls to the procs and the SQL team the procs themselves.</p>
+
+
+</body>
+</html>
