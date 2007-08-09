@@ -90,12 +90,20 @@ public class Util {
     /**
      * Quick and dirty logger (so that we don't have to have log4j in classpath)
      */
-    static class Log {
-        private boolean debugEnabled = false;
+    public static class Log {
+        private boolean debugEnabled = true;
 
         public void debug(String s) {
             if (!debugEnabled) return;
             System.out.println("DEBUG: " + s);
+        }
+
+        public void error(String s) {
+            System.out.println("ERROR: " + s);
+        }
+
+        public void error(Object o) {
+            if ( o!= null ) error(o.toString());
         }
 
         public void info(String s) {
