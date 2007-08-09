@@ -165,7 +165,18 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     }
 
     public String toString() {
-        return name + " " + line + ":" + column;
+        return "ParsedMethod{" +
+                "name='" + name + '\'' +
+                ", sql='" + sql + '\'' +
+                ", params=" + params +
+                ", returns='" + returns + '\'' +
+                ", returnsType='" + returnsType + '\'' +
+                ", cacheModel='" + cacheModel + '\'' +
+                ", resultMap='" + resultMap + '\'' +
+                ", type=" + type +
+                ", line=" + line +
+                ", column=" + column +
+                '}';
     }
 
     public int compareTo(ParsedMethod other) {
