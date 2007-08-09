@@ -67,4 +67,12 @@ public class ParsedCacheModel {
     public void setType(String type) {
         this.type = type;
     }
+
+    public String toString() {
+        return "ParsedCacheModel{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", flushIntervalHours='" + flushIntervalHours + '\'' +
+                '}';
+    }
 }

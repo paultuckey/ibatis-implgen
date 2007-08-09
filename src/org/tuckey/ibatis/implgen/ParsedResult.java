@@ -91,4 +91,15 @@ public class ParsedResult {
     public boolean isAnyNullValue() {
         return nullValue != null && !"_unspecified_".equals(nullValue);
     }
+
+
+    public String toString() {
+        return "ParsedResult{" +
+                "property='" + property + '\'' +
+                ", column='" + column + '\'' +
+                ", javaType='" + javaType + '\'' +
+                ", jdbcType='" + jdbcType + '\'' +
+                ", nullValue='" + nullValue + '\'' +
+                '}';
+    }
 }

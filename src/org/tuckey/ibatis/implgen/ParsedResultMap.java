@@ -44,6 +44,10 @@ public class ParsedResultMap {
     private String javaClass;
     private List<ParsedResult> results = new ArrayList<ParsedResult>();
 
+    public void addResult(ParsedResult result) {
+        results.add(result);
+    }
+    
     public String getId() {
         return id;
     }
@@ -74,5 +78,14 @@ public class ParsedResultMap {
 
     public boolean isAnyExtendsMap() {
         return extendsMap != null && extendsMap.length() > 0;
+    }
+
+    public String toString() {
+        return "ParsedResultMap{" +
+                "id='" + id + '\'' +
+                ", extendsMap='" + extendsMap + '\'' +
+                ", javaClass='" + javaClass + '\'' +
+                ", results=" + results +
+                '}';
     }
 }
