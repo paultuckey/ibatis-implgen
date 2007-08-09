@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Example showing auto SQL type detection.
+ * Example showing auto un-annotated methods where SQL type detection will be used.
  */
 public interface ExampleDaoThree {
 
