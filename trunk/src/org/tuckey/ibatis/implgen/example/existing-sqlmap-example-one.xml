@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="MySqlMap">
+
+    <cacheModel id="twoHourCache" type="MEMORY">
+        <flushInterval hours="2"/>
+        <property name="reference-type" value="SOFT"/>
+    </cacheModel>
+
+    <parameterMap id="updatePerson-map" class="map">
+        <parameter property="id" javaType="long"    jdbcType="NUMERIC"/>
+        <parameter property="name" javaType="string" jdbcType="VARCHAR"/>
+        <parameter property="addr1" javaType="string" jdbcType="VARCHAR"/>
+        <parameter property="addr2" javaType="string" jdbcType="VARCHAR"/>
+    </parameterMap>
+
+    <resultMap id="getCodeTable-result" class="java.util.HashMap">
+        <result property="code" column="com_type_code" javaType="string" jdbcType="VARCHAR"/>
+        <result property="desc" column="com_type_descr" javaType="string" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="person-result" class="some.package.SomePersonBean">
+        <result property="id"       column="person_id" javaType="long"   jdbcType="NUMERIC"/>
+        <result property="name"     column="surname"   javaType="string" jdbcType="VARCHAR"/>
+        <result property="addr1"    column="addr_1"    javaType="string" jdbcType="VARCHAR"/>
+        <result property="addr2"    column="addr_2"    javaType="string" jdbcType="VARCHAR"/>
+        <result property="postCode" column="post_code" javaType="string" jdbcType="VARCHAR"/>
+        <result property="country"  column="country"   javaType="string" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <procedure id="getPeople" resultMap="person-result">
+        {call sp_get_people(#id:NUMERIC#, #getAllAssociated:NUMERIC#)}
+    </procedure>
+
+    <procedure id="getPeopleByName" parameterClass="string" resultMap="person-result" cacheModel="twoHourCache">
+        {call sp_get_people_by_name(#value:VARCHAR#}
+    </procedure>
+
+    <procedure id="insertAuditTransaction" parameterMap="updatePerson-map" >
+        {call sp_update_person(?,?,?, ?)}
+    </procedure>
+
+</sqlMap>
