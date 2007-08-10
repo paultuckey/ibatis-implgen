@@ -5,6 +5,7 @@
     <classpathentry kind="src" path="src" />
     <classpathentry kind="lib" path="C:/java/jdk1.5.0_08/lib/tools.jar" />
     <classpathentry kind="lib" path="lib/ibatis-2.3.0.677.jar" />
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ant" />
     <classpathentry kind="output" path="bin" />
 </classpath>
 
