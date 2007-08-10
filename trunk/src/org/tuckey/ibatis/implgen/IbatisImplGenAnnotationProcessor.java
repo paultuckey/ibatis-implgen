@@ -54,8 +54,14 @@ import org.tuckey.ibatis.implgen.annotations.ResultMap;
 import org.tuckey.ibatis.implgen.annotations.Select;
 import org.tuckey.ibatis.implgen.annotations.Statement;
 import org.tuckey.ibatis.implgen.annotations.Update;
-import org.tuckey.ibatis.implgen.generated.GeneratedSqlMapImplClassTemplate;
-import org.tuckey.ibatis.implgen.generated.GeneratedSqlmapXmlTemplate;
+import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapImplementationTemplate;
+import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapXmlTemplate;
+import org.tuckey.ibatis.implgen.bean.ParsedResult;
+import org.tuckey.ibatis.implgen.bean.ParsedClass;
+import org.tuckey.ibatis.implgen.bean.ParsedMethod;
+import org.tuckey.ibatis.implgen.bean.ParsedParam;
+import org.tuckey.ibatis.implgen.bean.ParsedResultMap;
+import org.tuckey.ibatis.implgen.bean.ParsedCacheModel;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,11 +72,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 
 
 /**
@@ -141,19 +147,19 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 }
 
                 // output files for the class
-                if ( parsedClass.isAnySQLMethods() ) processClass(parsedClass);
+                if (parsedClass.isAnySQLMethods()) processClass(parsedClass);
 
                 List<ParsedClass> classList = packages.get(typeDecl.getPackage().getQualifiedName());
-                if ( classList == null ) {
+                if (classList == null) {
                     classList = new ArrayList<ParsedClass>();
                     packages.put(typeDecl.getPackage().getQualifiedName(), classList);
                 }
-                if ( parsedClass.isAnySQLMethods() ) classList.add(parsedClass);
+                if (parsedClass.isAnySQLMethods()) classList.add(parsedClass);
             }
 
             // for each package outout:
             for (List<ParsedClass> classes : packages.values()) {
-                if ( classes.size() == 0 ) continue;
+                if (classes.size() == 0) continue;
                 PrintWriter daoXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
                         new File("GeneratedDaoSnippet.xml"), null);
                 PrintWriter sqlMapXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
@@ -163,9 +169,9 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 sqlMapXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS SqlMap config -->");
                 // write a line for each impl we generated
                 for (ParsedClass parsedClass : classes) {
-                    daoXmlFileWriter.println("<dao interface=\""+ parsedClass.getFullyQualifiedName() + "\" " +
-                            "implementation=\""+ parsedClass.getGeneratedJavaClassFullyQualifiedName() + "\"/>");
-                    sqlMapXmlFileWriter.println("<sqlMap resource=\""+parsedClass.getGeneratedXmlFilePath() + "\"/>");
+                    daoXmlFileWriter.println("<dao interface=\"" + parsedClass.getFullyQualifiedName() + "\" " +
+                            "implementation=\"" + parsedClass.getGeneratedJavaClassFullyQualifiedName() + "\"/>");
+                    sqlMapXmlFileWriter.println("<sqlMap resource=\"" + parsedClass.getGeneratedXmlFilePath() + "\"/>");
                 }
                 daoXmlFileWriter.close();
                 sqlMapXmlFileWriter.close();
@@ -186,12 +192,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
 
         if (method.getType() == null && sql.length() > 0) {
             // need to auto detect type by looking at sql
-            ParsedMethod.Type type = null;
-            if (Util.sqlStartsWithKeyword("select", sql)) type = ParsedMethod.Type.SELECT;
-            if (Util.sqlStartsWithKeyword("delete", sql)) type = ParsedMethod.Type.DELETE;
-            if (Util.sqlStartsWithKeyword("update", sql)) type = ParsedMethod.Type.UPDATE;
-            if (Util.sqlStartsWithKeyword("insert", sql)) type = ParsedMethod.Type.INSERT;
-            if (Util.sqlStartsWithKeyword("call", sql)) type = ParsedMethod.Type.PROCEDURE;
+            ParsedMethod.Type type = guessType(sql);
             if (type != null) {
                 method.setType(type);
                 log.info("detected type " + type);
@@ -207,18 +208,28 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         }
     }
 
+    private ParsedMethod.Type guessType(String sql) {
+        ParsedMethod.Type type = null;
+        if (Util.sqlStartsWithKeyword("select", sql)) type = ParsedMethod.Type.SELECT;
+        if (Util.sqlStartsWithKeyword("delete", sql)) type = ParsedMethod.Type.DELETE;
+        if (Util.sqlStartsWithKeyword("update", sql)) type = ParsedMethod.Type.UPDATE;
+        if (Util.sqlStartsWithKeyword("insert", sql)) type = ParsedMethod.Type.INSERT;
+        if (Util.sqlStartsWithKeyword("call", sql)) type = ParsedMethod.Type.PROCEDURE;
+        return type;
+    }
+
     /**
      * Outputs the implemented class file and xml file.
      */
     private void processClass(ParsedClass parsedClass) throws IOException {
         PrintWriter xmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, parsedClass.getPackageStr(),
                 new File(parsedClass.getGeneratedXmlFileName()), null);
-        GeneratedSqlmapXmlTemplate mapXmlTemplate = new GeneratedSqlmapXmlTemplate();
+        GeneratedSqlMapXmlTemplate mapXmlTemplate = new GeneratedSqlMapXmlTemplate();
         mapXmlTemplate.parsedClass = parsedClass;
         mapXmlTemplate.write(xmlFileWriter);
 
         PrintWriter mapClassWriter = env.getFiler().createSourceFile(parsedClass.getGeneratedJavaClassFullyQualifiedName());
-        GeneratedSqlMapImplClassTemplate mapClassTemplate = new GeneratedSqlMapImplClassTemplate();
+        GeneratedSqlMapImplementationTemplate mapClassTemplate = new GeneratedSqlMapImplementationTemplate();
         mapClassTemplate.parsedClass = parsedClass;
         mapClassTemplate.write(mapClassWriter);
     }

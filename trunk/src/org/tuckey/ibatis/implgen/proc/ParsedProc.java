@@ -32,23 +32,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.ibatis.implgen;
+package org.tuckey.ibatis.implgen.proc;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Models a database stored procedure.
+ *
+ * @see ParsedProcParam
+ * @see ProcParser
+ */
+public class ParsedProc {
 
-public class ParsedClass {
-
-    private static final String GENERATED_FILE_SUFFIX = "GeneratedSqlMap";
-    private String name = "";
-    private String packageStr = "";
-    private List<ParsedMethod> methods = new ArrayList<ParsedMethod>();
-    private List<ParsedCacheModel> cacheModels = new ArrayList<ParsedCacheModel>();
-    private List<ParsedResultMap> resultMaps = new ArrayList<ParsedResultMap>();
-    private File classFile;
-    private boolean classIsInterface;
+    private String name;
+    private File originalFile;
+    private String description;
+    private String author;
+    private String version;
+    private ParsedProcParam[] params;
+    private String returnDesc;
 
     public String getName() {
         return name;
@@ -58,66 +60,72 @@ public class ParsedClass {
         this.name = name;
     }
 
-    public List<ParsedMethod> getMethods() {
-        return methods;
+    public File getOriginalFile() {
+        return originalFile;
     }
 
-    public String getPackageStr() {
-        return packageStr;
+    public void setOriginalFile(File originalFile) {
+        this.originalFile = originalFile;
     }
 
-    public void setPackageStr(String packageStr) {
-        this.packageStr = packageStr;
+    public boolean isAnyParams() {
+        return params != null && params.length > 0;
     }
 
-    public File getClassFile() {
-        return classFile;
+    public String getDescription() {
+        return description == null ? "" : description;
     }
 
-    public void setClassFile(File classFile) {
-        this.classFile = classFile;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getFullyQualifiedName() {
-        return packageStr + "." + name;
+
+    public void setParams(ParsedProcParam[] params) {
+        this.params = params;
     }
 
-    public String getGeneratedXmlFileName() {
-        return name + GENERATED_FILE_SUFFIX + ".xml";
+    public ParsedProcParam[] getParams() {
+        return params;
     }
 
-    public String getGeneratedXmlFilePath() {
-        return getFullyQualifiedName().replace('.', '/') + '/' + getGeneratedXmlFileName();
+    public String getAuthor() {
+        return author;
     }
 
-    public String getGeneratedJavaClassName() {
-        return name + GENERATED_FILE_SUFFIX;
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public String getGeneratedJavaClassFullyQualifiedName() {
-        return getFullyQualifiedName() + GENERATED_FILE_SUFFIX;
+    public String getVersion() {
+        return version;
     }
 
-    public List<ParsedCacheModel> getCacheModels() {
-        return cacheModels;
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public List<ParsedResultMap> getResultMaps() {
-        return resultMaps;
+    public boolean isVersion() {
+        return version != null && version.length() > 0;
+    }
+    public boolean isAuthor() {
+        return author != null && author.length() > 0;
+    }
+    public boolean isReturnDesc() {
+        return returnDesc != null && returnDesc.length() > 0;
     }
 
-    public String getImplementsOrExtends() {
-        return classIsInterface ? "implements" : "extends";
+    public void setReturnDesc(String s) {
+        returnDesc = s;
     }
 
-    public void setClassIsInterface(boolean classIsInterface) {
-        this.classIsInterface = classIsInterface;
+    public String getReturnDesc() {
+        return returnDesc;
     }
 
-    public boolean isAnySQLMethods() {
-        for (ParsedMethod method : methods) {
-            if ( method.getSql() != null && method.getSql().length() > 0 ) return true;
-        }
-        return false;
+    public boolean isValid() {
+        return name != null;
     }
 }

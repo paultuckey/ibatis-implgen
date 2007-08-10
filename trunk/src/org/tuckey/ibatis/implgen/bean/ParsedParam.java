@@ -32,60 +32,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.ibatis.implgen;
+package org.tuckey.ibatis.implgen.bean;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ParsedParam {
+    private String name;
+    private String type;
 
-
-public class ParsedResultMap {
-    private String id;
-    private String extendsMap;
-    private String javaClass;
-    private List<ParsedResult> results = new ArrayList<ParsedResult>();
-
-    public void addResult(ParsedResult result) {
-        results.add(result);
-    }
-    
-    public String getId() {
-        return id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getName() {
+        return name;
     }
 
-    public String getExtendsMap() {
-        return extendsMap;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public void setExtendsMap(String extendsMap) {
-        this.extendsMap = extendsMap;
+    public String getType() {
+        return type;
     }
 
-    public List<ParsedResult> getResults() {
-        return results;
-    }
-
-    public String getJavaClass() {
-        return javaClass;
-    }
-
-    public void setJavaClass(String javaClass) {
-        this.javaClass = javaClass;
-    }
-
-    public boolean isAnyExtendsMap() {
-        return extendsMap != null && extendsMap.length() > 0;
-    }
-
-    public String toString() {
-        return "ParsedResultMap{" +
-                "id='" + id + '\'' +
-                ", extendsMap='" + extendsMap + '\'' +
-                ", javaClass='" + javaClass + '\'' +
-                ", results=" + results +
-                '}';
+    public String getTypeForJavaClass() {
+        return type.startsWith("java.lang.") ? type.substring("java.lang.".length()): type;
     }
 }

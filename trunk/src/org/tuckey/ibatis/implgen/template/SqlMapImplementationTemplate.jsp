@@ -1,4 +1,7 @@
 <%@ page import="org.tuckey.ibatis.implgen.*" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParam" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedMethod" %>
 <%! public ParsedClass parsedClass; %>
 
 package <%= parsedClass.getPackageStr() %>;
