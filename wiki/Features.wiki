@@ -7,17 +7,17 @@
   * Migration code for existing XML SqlMap config files
 
 
-Hopefully this example is self-explanatory.
+This example is self-explanatory.
 
 
 {{{
     // ***** result maps ****************************************
 
     @ResultMap(id = "person-result", results = {
-    @Result(property = "personId", column = "id", javaType = "Long", jdbcType = "NUMERIC", nullValue = "0"),
-    @Result(property = "fullName", column = "name", javaType = "string", jdbcType = "VARCHAR", nullValue = ""),
-    @Result(property = "dateOfBirth", column = "dob", javaType = "date", jdbcType = "TIMESTAMP")
-            })
+        @Result(property = "personId", column = "id", javaType = "Long", jdbcType = "NUMERIC", nullValue = "0"),
+        @Result(property = "fullName", column = "name", javaType = "string", jdbcType = "VARCHAR", nullValue = ""),
+        @Result(property = "dateOfBirth", column = "dob", javaType = "date", jdbcType = "TIMESTAMP")
+    })
 
     // ***** caches ****************************************
 
@@ -34,14 +34,6 @@ Hopefully this example is self-explanatory.
         update table_of_names set name = #name:VARCHAR# where id = #id:NUMERIC#
 
     }*/;
-
-    @Delete
-    public void deleteName(int id) throws SQLException /*sql{
-
-        delete from table_of_names where id = #id:NUMERIC#
-
-    }*/;
-
 
     @Select
     public List<String> getListOfNames() throws SQLException /*sql{
