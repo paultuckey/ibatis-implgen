@@ -32,74 +32,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.ibatis.implgen;
+package org.tuckey.ibatis.implgen.bean;
 
 
-public class ParsedResult {
+public class ParsedCacheModel {
+    private String id;
+    private String type;
+    private String flushIntervalHours;
 
-    private String property;
-
-    private String column;
-
-    private String javaType;
-
-    private String jdbcType;
-
-    private String nullValue;
-
-
-    public String getProperty() {
-        return property;
+    public String getId() {
+        return id;
     }
 
-    public void setProperty(String property) {
-        this.property = property;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getColumn() {
-        return column;
+    public String getFlushIntervalHours() {
+        return flushIntervalHours;
     }
 
-    public void setColumn(String column) {
-        this.column = column;
+    public void setFlushIntervalHours(String flushIntervalHours) {
+        this.flushIntervalHours = flushIntervalHours;
     }
 
-    public String getJavaType() {
-        return javaType;
+    public boolean isFlushInterval() {
+        return flushIntervalHours != null && flushIntervalHours.length() > 0;
     }
 
-    public void setJavaType(String javaType) {
-        this.javaType = javaType;
+    public String getType() {
+        return type;
     }
 
-    public String getJdbcType() {
-        return jdbcType;
+    public void setType(String type) {
+        this.type = type;
     }
-
-    public void setJdbcType(String jdbcType) {
-        this.jdbcType = jdbcType;
-    }
-
-    public String getNullValue() {
-        return nullValue;
-    }
-
-    public void setNullValue(String nullValue) {
-        this.nullValue = nullValue;
-    }
-
-    public boolean isAnyNullValue() {
-        return nullValue != null && !"_unspecified_".equals(nullValue);
-    }
-
 
     public String toString() {
-        return "ParsedResult{" +
-                "property='" + property + '\'' +
-                ", column='" + column + '\'' +
-                ", javaType='" + javaType + '\'' +
-                ", jdbcType='" + jdbcType + '\'' +
-                ", nullValue='" + nullValue + '\'' +
+        return "ParsedCacheModel{" +
+                "id='" + id + '\'' +
+                ", type='" + type + '\'' +
+                ", flushIntervalHours='" + flushIntervalHours + '\'' +
                 '}';
     }
 }

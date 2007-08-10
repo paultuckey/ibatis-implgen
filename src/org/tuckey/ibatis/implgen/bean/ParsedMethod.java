@@ -32,7 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.ibatis.implgen;
+package org.tuckey.ibatis.implgen.bean;
+
+import org.tuckey.ibatis.implgen.Util;
 
 import java.util.ArrayList;
 import java.util.List;
