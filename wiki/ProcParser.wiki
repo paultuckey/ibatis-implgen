@@ -1,0 +1,8 @@
+#summary About Stored Procedure Parser
+
+
+= Stored Procedure Parser =
+
+  * Stored procedure parser to generate:
+        # Annotated java interface for calling procs
+        # HTML documentation

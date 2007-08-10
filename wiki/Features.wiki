@@ -1,7 +1,7 @@
 #labels Featured
+
+
 = Annotation Based iBATIS configuration =
-
-
 
   * Generate iBATIS xml file and implementation class from an annotated java interface or abstract class
   * Migration code for existing XML SqlMap config files
@@ -74,9 +74,3 @@ Code with no annotation can be specified.  The SQL is parsed and whatever SQL ke
     }*/;
 }}}
 
-
-=== Future ===
-
-  * Stored procedure parser to generate:
-        # Annotated java interface for calling procs
-        # HTML documentation
