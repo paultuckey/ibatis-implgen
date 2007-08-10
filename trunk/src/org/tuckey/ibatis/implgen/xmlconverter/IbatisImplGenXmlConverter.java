@@ -128,7 +128,7 @@ public class IbatisImplGenXmlConverter {
         try {
 
             converter.template(
-                    new File("src/org/tuckey/ibatis/implgen/xmlconverter/example/example-one.xml"),
+                    new File("src/org/tuckey/ibatis/implgen/xmlconverter/example/existing-sqlmap-example-one.xml"),
                     new File("docs/ExampleOne.java")
             );
 
