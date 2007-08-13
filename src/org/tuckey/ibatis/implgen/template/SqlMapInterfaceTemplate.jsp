@@ -5,6 +5,8 @@
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResultMap" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResult" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedProc" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParam" %>
 <%! public ParsedClass parsedClass; %>
 <%! public List allItems; %>
 
@@ -42,7 +44,11 @@ public interface <%= parsedClass.getName() %> {
         <% } %>
         <% if ( method.getType() == ParsedMethod.Type.PROCEDURE ) { %>
             @Procedure
-            public void <%= method.getName() %>() throws SQLException /*sql{
+            public void <%= method.getName() %>(
+                <% for (ParsedParam param : method.getParams()) { %><%--
+                    --%><%= param.getJavaTypeShort() %> <%= param.getName() %> 
+                <% } %>
+            ) throws SQLException /*sql{
 
                 <%= method.getSql() %>
 

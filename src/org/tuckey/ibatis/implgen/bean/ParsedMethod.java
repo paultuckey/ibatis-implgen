@@ -123,7 +123,7 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     }
 
     public String getParameterClass() {
-        return params.size() == 0 ? "null" : params.size() == 1 ? params.get(0).getType() : "map";
+        return params.size() == 0 ? "null" : params.size() == 1 ? params.get(0).getJavaType() : "map";
     }
 
     public String getParamsVarName() {
