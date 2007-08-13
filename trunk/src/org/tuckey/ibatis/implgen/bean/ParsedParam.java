@@ -36,7 +36,18 @@ package org.tuckey.ibatis.implgen.bean;
 
 public class ParsedParam {
     private String name;
-    private String type;
+    private String jdbcType;
+    private String sqlType;
+    private String javaType;
+    private String description;
+
+    public ParsedParam(String param, String sqlType) {
+        this.name = param;
+        setSqlType(sqlType);
+    }
+
+    public ParsedParam() {
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -46,15 +57,39 @@ public class ParsedParam {
         return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public String getDescription() {
+        return description;
     }
 
-    public String getType() {
-        return type;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getTypeForJavaClass() {
-        return type.startsWith("java.lang.") ? type.substring("java.lang.".length()): type;
+    public String getJdbcType() {
+        return jdbcType;
+    }
+
+    public void setJdbcType(String jdbcType) {
+        this.jdbcType = jdbcType == null ? null : jdbcType.trim().toUpperCase();
+    }
+
+    public String getSqlType() {
+        return sqlType;
+    }
+
+    public void setSqlType(String sqlType) {
+        this.sqlType = sqlType == null ? null : sqlType.trim().toLowerCase();
+    }
+
+    public String getJavaType() {
+        return javaType;
+    }
+
+    public void setJavaType(String javaType) {
+        this.javaType = javaType == null ? null : javaType.trim();
+    }
+
+    public String getJavaTypeShort() {
+        return javaType.startsWith("java.lang.") ? javaType.substring("java.lang.".length()): javaType;
     }
 }

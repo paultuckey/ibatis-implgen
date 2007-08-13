@@ -36,6 +36,8 @@ package org.tuckey.ibatis.implgen.proc;
 
 
 import org.tuckey.ibatis.implgen.Util;
+import org.tuckey.ibatis.implgen.bean.ParsedParam;
+import org.tuckey.ibatis.implgen.bean.ParsedProc;
 
 import java.io.File;
 import java.io.FileReader;
@@ -46,10 +48,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class ProcParserSybase extends ProcParser {
+public class ProcParserSybase implements ProcParser {
 
     Util.Log log = Util.getLog();
-   
+
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -114,9 +116,7 @@ public class ProcParserSybase extends ProcParser {
     private final Pattern PARAM_JAVADOC_PATTERN = Pattern.compile("^\\s*--\\s*@param\\s+(.*)$", Pattern.CASE_INSENSITIVE);
 
 
-
-
-    protected void process(File f, ParsedProc sp) throws IOException {
+    public void process(File f, ParsedProc sp) throws IOException {
         int size = (int) f.length();
         FileReader fis = new FileReader(f);
         String procNameFromFileName = f.getName().substring(0, f.getName().length() - ".sql".length());
@@ -137,12 +137,12 @@ public class ProcParserSybase extends ProcParser {
             parseParams(params, sp);
 
             parseDoc(remainder, sp);
-        }   else {
+        } else {
             // might be a view
             Matcher viewMatcher = CREATE_VIEW.matcher(CharBuffer.wrap(buffer));
-            if ( viewMatcher.find() ) {
+            if (viewMatcher.find()) {
                 log.error("is a view skipping");
-            }   else if (sp.getName() == null) {
+            } else if (sp.getName() == null) {
                 log.error("unable to parse " + f.getName());
             }
         }
@@ -152,14 +152,17 @@ public class ProcParserSybase extends ProcParser {
     private void parseParams(String params, ParsedProc sp) {
         if (params == null) return;
         Matcher paramMatcher = PARAM_PATTERN.matcher(params);
-        ArrayList<ParsedProcParam> paramsRaw = new ArrayList<ParsedProcParam>();
+        ArrayList<ParsedParam> paramsRaw = new ArrayList<ParsedParam>();
         while (paramMatcher.find()) {
             String param = paramMatcher.group(1);
-            String type = paramMatcher.group(2);
+            String sqlType = paramMatcher.group(2);
             //log.debug(", " + count + ") " + param + ": " + type.replaceAll("\\s+$", ""));
-            paramsRaw.add(new ParsedProcParam(param, type));
+            ParsedParam pp = new ParsedParam(param, sqlType);
+            pp.setJavaType(sqlTypeToJavaType(sqlType));
+            pp.setJdbcType(sqlTypeToJdbcType(sqlType));
+            paramsRaw.add(pp);
         }
-        ParsedProcParam[] paramsArr = new ParsedProcParam[paramsRaw.size()];
+        ParsedParam[] paramsArr = new ParsedParam[paramsRaw.size()];
         paramsRaw.toArray(paramsArr);
         sp.setParams(paramsArr);
     }
@@ -209,7 +212,7 @@ public class ProcParserSybase extends ProcParser {
                         if (paramDesc.startsWith("-")) {
                             // back populate onto param
                             for (int j = 0; j < sp.getParams().length; j++) {
-                                ParsedProcParam param = sp.getParams()[j];
+                                ParsedParam param = sp.getParams()[j];
                                 if (param.getName().equalsIgnoreCase(paramDescName)) {
                                     param.setDescription(paramDesc);
                                 }
@@ -240,6 +243,47 @@ public class ProcParserSybase extends ProcParser {
         sp.setDescription(description);
     }
 
+
+    public String sqlTypeToJavaType(String sqlType) {
+        String type = "";
+        if (sqlType.matches("^char.*$")) type = "java.lang.String";
+        if (sqlType.matches("^varchar.*$")) type = "java.lang.String";
+        if (sqlType.matches("^numeric.*$")) type = "java.lang.Long";
+        return type;
+    }
+
+    public String sqlTypeToJdbcType(String sqlType) {
+        String type = "";
+        if (sqlType.matches("^char.*$")) type = "VARCHAR";
+        if (sqlType.matches("^varchar.*$")) type = "VARCHAR";
+        if (sqlType.matches("^numeric.*$")) type = "INTEGER";
+        return type;
+    }
+
+
+    String[][] typeMap2 = {
+            {"java.lang.Boolean", "BIT"},
+            {"java.lang.Byte", "TINYINT"},
+            {"java.lang.Short", "SMALLINT"},
+            {"java.lang.Integer", "INTEGER"},
+            {"java.lang.Long", "INTEGER"},
+            {"java.lang.Double", "FLOAT"},
+            {"java.lang.Double", "DOUBLE PRECISION"},
+            {"java.lang.Float", "REAL"},
+            {"java.math.BigDecimal", "NUMERIC"},
+            {"java.math.BigDecimal", "DECIMAL"},
+            {"java.lang.String", "CHAR"},
+            {"java.lang.String", "VARCHAR"},
+            {"java.lang.String", "TEXT"},
+            {"java.sql.Date", "DATETIME"},
+            {"java.sql.Time", "DATETIME"},
+            {"java.sql.Timestamp", "TIMESTAMP"},
+            {"byte[]", "BINARY"},
+            {"byte[]", "VARBINARY"},
+            {"java.lang.Object", "IMAGE"},
+            {"java.io.InputStream", "IMAGE"},
+            {"java.sql.Clob", "TEXT"}
+    };
 
 }
 

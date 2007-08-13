@@ -46,7 +46,7 @@ public class <%= parsedClass.getGeneratedJavaClassName() %> <%= parsedClass.getI
     public <%= method.getReturns() %> <%= method.getName() %>(<%
             int i = 0;
             for (ParsedParam param : method.getParams()) { %><%-- 
-                --%><%= (i > 0 ? ", " : "") %><%= param.getTypeForJavaClass() %> <%= param.getName()%><%
+                --%><%= (i > 0 ? ", " : "") %><%= param.getJavaTypeShort() %> <%= param.getName()%><%
                 i++;
             } %>) throws SQLException {
         <% if ( method.isAnyParameters() ) { %><%--

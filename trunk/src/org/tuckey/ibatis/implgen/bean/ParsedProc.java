@@ -32,15 +32,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.ibatis.implgen.proc;
+package org.tuckey.ibatis.implgen.bean;
+
+import org.tuckey.ibatis.implgen.bean.ParsedParam;
 
 import java.io.File;
 
 /**
  * Models a database stored procedure.
  *
- * @see ParsedProcParam
- * @see ProcParser
+ * @see ParsedParam
+ * @see org.tuckey.ibatis.implgen.proc.ProcParser
  */
 public class ParsedProc {
 
@@ -49,7 +51,7 @@ public class ParsedProc {
     private String description;
     private String author;
     private String version;
-    private ParsedProcParam[] params;
+    private ParsedParam[] params;
     private String returnDesc;
 
     public String getName() {
@@ -81,11 +83,11 @@ public class ParsedProc {
     }
 
 
-    public void setParams(ParsedProcParam[] params) {
+    public void setParams(ParsedParam[] params) {
         this.params = params;
     }
 
-    public ParsedProcParam[] getParams() {
+    public ParsedParam[] getParams() {
         return params;
     }
 

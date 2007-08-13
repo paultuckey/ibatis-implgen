@@ -309,7 +309,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         for (ParameterDeclaration typeParam : declaration.getParameters()) {
             ParsedParam param = new ParsedParam();
             param.setName(typeParam.getSimpleName());
-            param.setType(typeParam.getType().toString());
+            param.setJavaType(typeParam.getType().toString());
             method.getParams().add(param);
         }
 
