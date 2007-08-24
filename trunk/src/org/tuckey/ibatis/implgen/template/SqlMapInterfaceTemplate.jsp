@@ -5,34 +5,35 @@
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResultMap" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResult" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedProc" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParam" %>
 <%! public ParsedClass parsedClass; %>
 <%! public List allItems; %>
 
 package <%= parsedClass.getPackageStr() %>;
 
+import java.sql.SQLException;
+import org.tuckey.ibatis.implgen.annotations.Procedure; <%-- todo: more types --%>
+
 public interface <%= parsedClass.getName() %> {
 
 <%
     for ( Object obj : allItems ) {
-%>
 
-    <% if ( obj instanceof ParsedCacheModel ) { %>
+     if ( obj instanceof ParsedCacheModel ) { %>
         <% ParsedCacheModel model = (ParsedCacheModel) obj; %>
         @CacheModel(id = "<%= model.getId() %>", type="<%= model.getType() %>", flushIntervalHours = "<%= model.getFlushIntervalHours() %>")
-    <% } %>
-
-    <% if ( obj instanceof ParsedResultMap ) { %><%--
+    <%
+        }
+       if ( obj instanceof ParsedResultMap ) { %><%--
         --%><% ParsedResultMap resultMap = (ParsedResultMap) obj; %><%--
         --%>@ResultMap(id = "<%= resultMap.getId() %>", results = {<%--
             --%><% for ( ParsedResult result : resultMap.getResults() ) { %><%--
                 --%>@Result(property = "<%= result.getProperty()%>", column = "<%= result.getColumn()%>", javaType = "<%= result.getJavaType()%>", jdbcType = "<%= result.getJdbcType()%>", nullValue = "<%= result.getNullValue()%>"),
             <% } %>
             })
-    <% } %>
-
-    <% if ( obj instanceof ParsedMethod ) { %><%--
+       <%
+      }
+      if ( obj instanceof ParsedMethod ) { %><%--
         --%><% ParsedMethod method = (ParsedMethod) obj; %>
         <% if ( method.getType() == ParsedMethod.Type.DELETE ) { %>
             @Delete
@@ -41,22 +42,26 @@ public interface <%= parsedClass.getName() %> {
                 <%= method.getSql() %>
 
             }*/;
-        <% } %>
-        <% if ( method.getType() == ParsedMethod.Type.PROCEDURE ) { %>
+        <% }
+           if ( method.getType() == ParsedMethod.Type.PROCEDURE ) { %>
             @Procedure
-            public void <%= method.getName() %>(
-                <% for (ParsedParam param : method.getParams()) { %><%--
-                    --%><%= param.getJavaTypeShort() %> <%= param.getName() %> 
-                <% } %>
-            ) throws SQLException /*sql{
+            public void <%= method.getName() %>(<%--
+                --%><%
+                    boolean first = true;
+                    for (ParsedParam param : method.getParams()) {
+                    %><%--
+                    --%><%= first ? "": "," %> <%= param.getJavaTypeShort() %> <%= param.getName() %><%--
+                --%><% first = false; %><%--
+                --%><%
+                    }
+                %> ) throws SQLException /*sql{
 
                 <%= method.getSql() %>
 
             }*/;
-        <% } %>
-    <% } %>
-
-<% } %>
+        <% }
+        }
+    } %>
 
 
 }

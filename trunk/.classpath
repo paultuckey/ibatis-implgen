@@ -3,6 +3,7 @@
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" />
     <classpathentry kind="src" path="build/generated" />
     <classpathentry kind="src" path="src" />
+    <classpathentry kind="src" path="test-src" />
     <classpathentry kind="lib" path="C:/java/jdk1.5.0_08/lib/tools.jar" />
     <classpathentry kind="lib" path="lib/ibatis-2.3.0.677.jar" />
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/ant" />

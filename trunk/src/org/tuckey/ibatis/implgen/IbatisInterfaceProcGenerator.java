@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Walk through all files/folders in the srcRoot and for each package containing sql files add an interface
@@ -106,5 +107,8 @@ public class IbatisInterfaceProcGenerator extends ProcGenerator {
         if ( name.length() == 0 ) name = "SqlMapInterface";
         return name;
     }
+
+
+
 }
 

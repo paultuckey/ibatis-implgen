@@ -7,6 +7,7 @@ import org.tuckey.ibatis.implgen.proc.ProcParserSybase;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class ProcGenerator {
 
@@ -54,7 +55,13 @@ public abstract class ProcGenerator {
         return sp;
     }
 
+    public void registerSqlToJavaConversion(String sqlType, String javaType) {
+        parser.registerSqlToJavaConversion(sqlType, javaType);
+    }
+
+
     ProcParser parser = new ProcParserSybase();
+
 
     public abstract void processDirectory(ParsedProc[] procs, File directory) throws IOException;
 
