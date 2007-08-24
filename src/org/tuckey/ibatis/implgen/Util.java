@@ -44,6 +44,13 @@ public class Util {
         return s == null || s.length() == 0;
     }
 
+    public static String trimToNull(String s) {
+        if ( s == null ) return null;
+        s = s.trim();
+        if ( s.length() == 0 ) return null;
+        return s;
+    }
+
     /**
      * a very very basic xml escaper.
      *

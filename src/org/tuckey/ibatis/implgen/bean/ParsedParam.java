@@ -34,6 +34,8 @@
  */
 package org.tuckey.ibatis.implgen.bean;
 
+import org.tuckey.ibatis.implgen.Util;
+
 public class ParsedParam {
     private String name;
     private String jdbcType;
@@ -70,7 +72,8 @@ public class ParsedParam {
     }
 
     public void setJdbcType(String jdbcType) {
-        this.jdbcType = jdbcType == null ? null : jdbcType.trim().toUpperCase();
+        this.jdbcType = Util.trimToNull(jdbcType);
+         if ( this.jdbcType != null ) this.jdbcType = jdbcType.toLowerCase();
     }
 
     public String getSqlType() {
@@ -78,18 +81,20 @@ public class ParsedParam {
     }
 
     public void setSqlType(String sqlType) {
-        this.sqlType = sqlType == null ? null : sqlType.trim().toLowerCase();
+        this.sqlType = Util.trimToNull(sqlType);
+         if ( this.sqlType != null ) this.sqlType = sqlType.toLowerCase();
     }
 
     public String getJavaType() {
-        return javaType;
+        return javaType == null ? "Object" : javaType;
     }
 
     public void setJavaType(String javaType) {
-        this.javaType = javaType == null ? null : javaType.trim();
+        this.javaType = Util.trimToNull(javaType);
     }
 
     public String getJavaTypeShort() {
+        if ( javaType == null ) return null;
         return javaType.startsWith("java.lang.") ? javaType.substring("java.lang.".length()): javaType;
     }
 }

@@ -12,4 +12,5 @@ public interface ProcParser {
 
     public void process(File f, ParsedProc sp) throws IOException;
 
+    void registerSqlToJavaConversion(String sqlType, String javaType);
 }

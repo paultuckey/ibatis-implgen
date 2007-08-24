@@ -44,6 +44,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,6 +149,12 @@ public class ProcParserSybase implements ProcParser {
         }
     }
 
+    HashMap<String, String> customSqlToJavaTypeConverters = new HashMap<String, String>();
+
+    public void registerSqlToJavaConversion(String sqlType, String javaType) {
+        customSqlToJavaTypeConverters.put(sqlType, javaType);
+    }
+
 
     private void parseParams(String params, ParsedProc sp) {
         if (params == null) return;
@@ -246,9 +253,16 @@ public class ProcParserSybase implements ProcParser {
 
     public String sqlTypeToJavaType(String sqlType) {
         String type = "";
-        if (sqlType.matches("^char.*$")) type = "java.lang.String";
-        if (sqlType.matches("^varchar.*$")) type = "java.lang.String";
-        if (sqlType.matches("^numeric.*$")) type = "java.lang.Long";
+        sqlType = Util.trimToNull(sqlType);
+        String customType = customSqlToJavaTypeConverters.get(sqlType);
+        if (Pattern.compile("^char.*$", Pattern.CASE_INSENSITIVE).matcher(sqlType).matches()) type = "java.lang.String";
+        if (Pattern.compile("^varchar.*$", Pattern.CASE_INSENSITIVE).matcher(sqlType).matches()) type = "java.lang.String";
+        if (Pattern.compile("^numeric.*$", Pattern.CASE_INSENSITIVE).matcher(sqlType).matches()) type = "java.lang.Long";
+        if (Pattern.compile("^int.*$", Pattern.CASE_INSENSITIVE).matcher(sqlType).matches()) type = "java.lang.Integer";
+        if (Pattern.compile("^smallint.*$", Pattern.CASE_INSENSITIVE).matcher(sqlType).matches()) type = "java.lang.Integer";
+        if (Pattern.compile("^datetime$", Pattern.CASE_INSENSITIVE).matcher(sqlType).matches()) type = "java.lang.Date";
+        if (customType!= null) type = customType;
+        if (type.length() == 0) System.out.println("st:'" + sqlType + "' " + type);
         return type;
     }
 
@@ -260,31 +274,4 @@ public class ProcParserSybase implements ProcParser {
         return type;
     }
 
-
-    String[][] typeMap2 = {
-            {"java.lang.Boolean", "BIT"},
-            {"java.lang.Byte", "TINYINT"},
-            {"java.lang.Short", "SMALLINT"},
-            {"java.lang.Integer", "INTEGER"},
-            {"java.lang.Long", "INTEGER"},
-            {"java.lang.Double", "FLOAT"},
-            {"java.lang.Double", "DOUBLE PRECISION"},
-            {"java.lang.Float", "REAL"},
-            {"java.math.BigDecimal", "NUMERIC"},
-            {"java.math.BigDecimal", "DECIMAL"},
-            {"java.lang.String", "CHAR"},
-            {"java.lang.String", "VARCHAR"},
-            {"java.lang.String", "TEXT"},
-            {"java.sql.Date", "DATETIME"},
-            {"java.sql.Time", "DATETIME"},
-            {"java.sql.Timestamp", "TIMESTAMP"},
-            {"byte[]", "BINARY"},
-            {"byte[]", "VARBINARY"},
-            {"java.lang.Object", "IMAGE"},
-            {"java.io.InputStream", "IMAGE"},
-            {"java.sql.Clob", "TEXT"}
-    };
-
 }
-
-
