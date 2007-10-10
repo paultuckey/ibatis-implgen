@@ -142,7 +142,9 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                     ParsedMethod nextMethod = posIdx + 1 >= rawMethods.size() ? null : rawMethods.get(posIdx + 1);
                     log.debug("next method " + nextMethod);
                     processPost(parsedClass, method, nextMethod);
-                    parsedClass.getMethods().add(method);
+                    if ( method.isSqlMethod() ) {
+                        parsedClass.getMethods().add(method);
+                    }
                     posIdx++;
                 }
 
@@ -338,7 +340,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 for (char currChar : lineStr.toCharArray()) {
                     charPos++;
                     if (currentLine + 1 == line && charPos < col) continue;
-                    if (currentLine + 1 >= stopAtLine && charPos >= stopAtCol) {
+                    if (currentLine + 1 >= stopAtLine && stopAtLine != -1 && charPos >= stopAtCol && stopAtCol != -1) {
                         breakOuter = true;
                         break;
                     }
@@ -395,7 +397,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
      * @return a collection containing the annotation names.
      */
     public Collection<String> supportedAnnotationTypes() {
-        return Arrays.asList("*");
+        return Arrays.asList("org.tuckey.ibatis.implgen.*");
     }
 
     public Collection<String> supportedOptions() {
