@@ -116,7 +116,7 @@ public class ParsedClass {
 
     public boolean isAnySQLMethods() {
         for (ParsedMethod method : methods) {
-            if ( method.getSql() != null && method.getSql().length() > 0 ) return true;
+            if ( method.isSqlMethod() ) return true;
         }
         return false;
     }

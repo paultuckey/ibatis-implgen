@@ -206,4 +206,8 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
         this.column = column;
     }
 
+    public boolean isSqlMethod() {
+        return sql != null && sql.length() > 0;
+    }
+
 }
