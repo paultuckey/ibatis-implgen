@@ -4,12 +4,14 @@
     PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
     "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 
-<%@ page import="org.tuckey.ibatis.implgen.*" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedMethod" %>
+<%@ page import="org.tuckey.ibatis.implgen.Util" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedCacheModel" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResultMap" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResult" %>
 <%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedMethod" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParameter" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParameterMap" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResult" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResultMap" %>
 <%! public ParsedClass parsedClass; %>
 
 <!--
@@ -29,6 +31,21 @@
         <% if ( cacheModel.isFlushInterval() ) { %><flushInterval hours="<%= cacheModel.getFlushIntervalHours() %>" /><% } %>
     </cacheModel>
     <% } %>
+
+    <% for (ParsedParameterMap parameterMap : parsedClass.getParameterMaps()) { %>
+    <parameterMap id="<%= parameterMap.getId() %>" class="<%= parameterMap.getJavaClass() %>" <%--
+            --%><% if ( parameterMap.isAnyExtendsMap() ) { %> extends="<%= parameterMap.getExtendsMap() %>" <% } %> ><%--
+        --%><% for (ParsedParameter result : parameterMap.getParameters()) { %>
+        <parameter property="<%= result.getProperty() %>" <%--
+                --%><% if ( !Util.empty(result.getJavaType()) ) { %> javaType="<%= result.getJavaType() %>" <% } %><%--
+                --%><% if ( !Util.empty(result.getJdbcType()) ) { %> jdbcType="<%= result.getJdbcType() %>" <% } %><%--
+                --%><% if ( !Util.empty(result.getMode()) ) { %> mode="<%= result.getMode() %>" <% } %><%--
+                --%><% if ( result.isAnyNullValue() ) { %> nullValue="<%= result.getNullValue() %>" <% } %> /><%--
+        --%><% } %>
+    </parameterMap>
+    <% } %>
+
+
 
     <% for (ParsedResultMap resultMap : parsedClass.getResultMaps()) { %>
         <% if ( Util.empty(resultMap.getJavaClass())) { continue; } %>
@@ -51,24 +68,28 @@
             --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
             --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
             --%><% if ( method.isAnyResultMap() ) { %> resultMap="<%= method.getResultMap() %>" <% } %><%--
+            --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyResultClass() ) { %> resultClass="<%= method.getReturnsType() %>" <% } %> >
         <%= method.getSqlEscaped() %>
     </select>
 
         <% } else if ( ParsedMethod.Type.UPDATE.equals(method.getType()) ) { %>
     <update id="<%= method.getName() %>" <%--
+               --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
                 --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </update>
 
         <% } else if ( ParsedMethod.Type.DELETE.equals(method.getType()) ) { %>
     <delete id="<%= method.getName() %>" <%--
+            --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>   >
         <%= method.getSqlEscaped() %>
     </delete>
 
         <% } else if ( ParsedMethod.Type.INSERT.equals(method.getType()) ) { %>
     <insert id="<%= method.getName() %>" <%--
+            --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </insert>
@@ -78,6 +99,7 @@
                --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
                --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
                --%><% if ( method.isAnyResultMap() ) { %> resultMap="<%= method.getResultMap() %>" <% } %><%--
+               --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
                --%><% if ( method.isAnyResultClass() ) { %> resultClass="<%= method.getReturnsType() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </procedure>
@@ -87,6 +109,7 @@
            --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
            --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
            --%><% if ( method.isAnyResultMap() ) { %> resultMap="<%= method.getResultMap() %>" <% } %><%--
+           --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
            --%><% if ( method.isAnyResultClass() ) { %> resultClass="<%= method.getReturnsType() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </statement>

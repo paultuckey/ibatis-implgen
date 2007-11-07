@@ -45,23 +45,32 @@ import com.sun.mirror.declaration.InterfaceDeclaration;
 import com.sun.mirror.declaration.MethodDeclaration;
 import com.sun.mirror.declaration.ParameterDeclaration;
 import com.sun.mirror.declaration.TypeDeclaration;
+import com.sun.mirror.type.ReferenceType;
 import org.tuckey.ibatis.implgen.annotations.CacheModel;
+import org.tuckey.ibatis.implgen.annotations.CacheModels;
 import org.tuckey.ibatis.implgen.annotations.Delete;
+import org.tuckey.ibatis.implgen.annotations.HasSql;
 import org.tuckey.ibatis.implgen.annotations.Insert;
+import org.tuckey.ibatis.implgen.annotations.Parameter;
+import org.tuckey.ibatis.implgen.annotations.ParameterMap;
+import org.tuckey.ibatis.implgen.annotations.ParameterMaps;
 import org.tuckey.ibatis.implgen.annotations.Procedure;
 import org.tuckey.ibatis.implgen.annotations.Result;
 import org.tuckey.ibatis.implgen.annotations.ResultMap;
+import org.tuckey.ibatis.implgen.annotations.ResultMaps;
 import org.tuckey.ibatis.implgen.annotations.Select;
 import org.tuckey.ibatis.implgen.annotations.Statement;
 import org.tuckey.ibatis.implgen.annotations.Update;
-import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapImplementationTemplate;
-import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapXmlTemplate;
-import org.tuckey.ibatis.implgen.bean.ParsedResult;
+import org.tuckey.ibatis.implgen.bean.ParsedCacheModel;
 import org.tuckey.ibatis.implgen.bean.ParsedClass;
 import org.tuckey.ibatis.implgen.bean.ParsedMethod;
 import org.tuckey.ibatis.implgen.bean.ParsedParam;
+import org.tuckey.ibatis.implgen.bean.ParsedParameter;
+import org.tuckey.ibatis.implgen.bean.ParsedParameterMap;
+import org.tuckey.ibatis.implgen.bean.ParsedResult;
 import org.tuckey.ibatis.implgen.bean.ParsedResultMap;
-import org.tuckey.ibatis.implgen.bean.ParsedCacheModel;
+import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapImplementationTemplate;
+import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapXmlTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -82,6 +91,8 @@ import java.util.Set;
 /**
  * Annotation processor that implements annotated Interface's with SQL in comments as an iBATIS SQLMap Class and XML
  * file.
+ * <p/>
+ * todo: method overloading support in interfaces that we generate from
  *
  * @see org.tuckey.ibatis.implgen.example.ExampleDaoOne
  */
@@ -93,7 +104,12 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
     private Messager messager;
 
     private static final String DEBUG_OPTION = "-Adebug";
+    private static final String DAO_SNIPPET_OPTION = "-AoutputDaoSnippet";
+    private static final String SQL_MAP_SNIPPET_OPTION = "-AoutputSqlMapSnippet";
     private static final String START_SQL_INDICATOR = "/*sql{";
+
+    private boolean outputDaoSnippet = true;
+    private boolean outputSqlMapSnippet = true;
 
     public IbatisImplGenAnnotationProcessor() {
         // empty constructor for apt tool
@@ -108,9 +124,18 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         Map<String, String> options = env.getOptions();
         Set<String> keys = options.keySet();
         for (String key : keys) {
-            if (!key.startsWith(DEBUG_OPTION + "=")) continue;
-            log.setDebug("true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1)));
+            if (key.startsWith(DEBUG_OPTION + "=")) {
+                log.setDebug("true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1)));
+            }
+            if (key.startsWith(DAO_SNIPPET_OPTION + "=")) {
+                outputDaoSnippet = "true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1));
+            }
+            if (key.startsWith(SQL_MAP_SNIPPET_OPTION + "=")) {
+                outputSqlMapSnippet = "true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1));
+            }
         }
+        log.debug("outputDaoSnippet set to " + outputDaoSnippet);
+        log.debug("outputSqlMapSnippet set to " + outputSqlMapSnippet);
         try {
 
             HashMap<String, List<ParsedClass>> packages = new HashMap<String, List<ParsedClass>>();
@@ -123,7 +148,29 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 parsedClass.setName(typeDecl.getSimpleName());
                 parsedClass.setPackageStr(typeDecl.getPackage().getQualifiedName());
                 parsedClass.setClassFile(typeDecl.getPosition().file());
-                parsedClass.setClassIsInterface(typeDecl instanceof InterfaceDeclaration);
+                parsedClass.setClassAnInterface(typeDecl instanceof InterfaceDeclaration);
+                log.debug("an interface? " + parsedClass.isClassAnInterface());
+
+                HasSql hasSql = typeDecl.getAnnotation(HasSql.class);
+                if (hasSql != null && hasSql.overrideXmlType() != null) {
+                    if (hasSql.overrideXmlType().equalsIgnoreCase("delete"))
+                        parsedClass.setOverrideXmlType(ParsedMethod.Type.DELETE);
+                    else if (hasSql.overrideXmlType().equalsIgnoreCase("insert"))
+                        parsedClass.setOverrideXmlType(ParsedMethod.Type.INSERT);
+                    else if (hasSql.overrideXmlType().equalsIgnoreCase("procedure"))
+                        parsedClass.setOverrideXmlType(ParsedMethod.Type.PROCEDURE);
+                    else if (hasSql.overrideXmlType().equalsIgnoreCase("select"))
+                        parsedClass.setOverrideXmlType(ParsedMethod.Type.SELECT);
+                    else if (hasSql.overrideXmlType().equalsIgnoreCase("statement"))
+                        parsedClass.setOverrideXmlType(ParsedMethod.Type.STATEMENT);
+                    else if (hasSql.overrideXmlType().equalsIgnoreCase("update"))
+                        parsedClass.setOverrideXmlType(ParsedMethod.Type.UPDATE);
+                    if (parsedClass.getOverrideXmlType() != null) {
+                        log.debug("got overrideXmlType " + parsedClass.getOverrideXmlType());
+                    }   else {
+                        log.error("could not find type for overrideXmlType '" + hasSql.overrideXmlType() + "'");
+                    }
+                }
 
                 List<ParsedMethod> rawMethods = new ArrayList<ParsedMethod>();
 
@@ -142,7 +189,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                     ParsedMethod nextMethod = posIdx + 1 >= rawMethods.size() ? null : rawMethods.get(posIdx + 1);
                     log.debug("next method " + nextMethod);
                     processPost(parsedClass, method, nextMethod);
-                    if ( method.isSqlMethod() ) {
+                    if (method.isSqlMethod()) {
                         parsedClass.getMethods().add(method);
                     }
                     posIdx++;
@@ -159,24 +206,34 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 if (parsedClass.isAnySQLMethods()) classList.add(parsedClass);
             }
 
-            // for each package outout:
-            for (List<ParsedClass> classes : packages.values()) {
-                if (classes.size() == 0) continue;
-                PrintWriter daoXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
-                        new File("GeneratedDaoSnippet.xml"), null);
-                PrintWriter sqlMapXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
-                        new File("GeneratedSqlMapSnippet.xml"), null);
-                // write header
-                daoXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS DAO config -->");
-                sqlMapXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS SqlMap config -->");
-                // write a line for each impl we generated
-                for (ParsedClass parsedClass : classes) {
-                    daoXmlFileWriter.println("<dao interface=\"" + parsedClass.getFullyQualifiedName() + "\" " +
-                            "implementation=\"" + parsedClass.getGeneratedJavaClassFullyQualifiedName() + "\"/>");
-                    sqlMapXmlFileWriter.println("<sqlMap resource=\"" + parsedClass.getGeneratedXmlFilePath() + "\"/>");
+            if (outputDaoSnippet) {
+                for (List<ParsedClass> classes : packages.values()) {
+                    if (classes.size() == 0) continue;
+                    PrintWriter daoXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
+                            new File("GeneratedDaoSnippet.xml"), null);
+                    // write header
+                    daoXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS DAO config -->");
+                    // write a line for each impl we generated
+                    for (ParsedClass parsedClass : classes) {
+                        daoXmlFileWriter.println("<dao interface=\"" + parsedClass.getFullyQualifiedName() + "\" " +
+                                "implementation=\"" + parsedClass.getGeneratedJavaClassFullyQualifiedName() + "\"/>");
+                    }
+                    daoXmlFileWriter.close();
                 }
-                daoXmlFileWriter.close();
-                sqlMapXmlFileWriter.close();
+            }
+            if (outputSqlMapSnippet) {
+                for (List<ParsedClass> classes : packages.values()) {
+                    if (classes.size() == 0) continue;
+                    PrintWriter sqlMapXmlFileWriter = env.getFiler().createTextFile(Filer.Location.SOURCE_TREE, classes.get(0).getPackageStr(),
+                            new File("GeneratedSqlMapSnippet.xml"), null);
+                    // write header
+                    sqlMapXmlFileWriter.println("<!-- generated snippet intended for use in iBATIS SqlMap config -->");
+                    // write a line for each impl we generated
+                    for (ParsedClass parsedClass : classes) {
+                        sqlMapXmlFileWriter.println("<sqlMap resource=\"" + parsedClass.getGeneratedXmlFilePath() + "\"/>");
+                    }
+                    sqlMapXmlFileWriter.close();
+                }
             }
 
         } catch (IOException e) {
@@ -239,9 +296,14 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
 
     private ParsedMethod processRawMethod(MethodDeclaration declaration, ParsedClass parsedClass) {
         ParsedMethod method = new ParsedMethod();
+        method.setBelongsToClass(parsedClass);
         method.setName(declaration.getSimpleName());
         method.setLine(declaration.getPosition().line());
         method.setColumn(declaration.getPosition().column());
+        for (ReferenceType referenceType : declaration.getThrownTypes()) {
+            log.debug("added alternative throw for " + referenceType.toString());
+            method.setAlternativeThrowsClass(referenceType.toString());
+        }
 
         // look for the type annotation
         Select selectAnnotation = declaration.getAnnotation(Select.class);
@@ -249,51 +311,78 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
             method.setType(ParsedMethod.Type.SELECT);
             method.setCacheModel(selectAnnotation.cacheModel());
             method.setResultMap(selectAnnotation.resultMap());
+            method.setParameterMap(selectAnnotation.parameterMap());
         }
         Procedure procAnnotation = declaration.getAnnotation(Procedure.class);
         if (procAnnotation != null) {
             method.setType(ParsedMethod.Type.PROCEDURE);
             method.setCacheModel(procAnnotation.cacheModel());
             method.setResultMap(procAnnotation.resultMap());
+            method.setParameterMap(procAnnotation.parameterMap());
         }
         Statement statementAnnotation = declaration.getAnnotation(Statement.class);
         if (statementAnnotation != null) {
             method.setType(ParsedMethod.Type.STATEMENT);
             method.setCacheModel(statementAnnotation.cacheModel());
             method.setResultMap(statementAnnotation.resultMap());
+            method.setParameterMap(statementAnnotation.parameterMap());
         }
         Delete deleteAnnotation = declaration.getAnnotation(Delete.class);
-        if (deleteAnnotation != null) method.setType(ParsedMethod.Type.DELETE);
+        if (deleteAnnotation != null) {
+            method.setType(ParsedMethod.Type.DELETE);
+            method.setParameterMap(deleteAnnotation.parameterMap());
+        }
         Insert insertAnnotation = declaration.getAnnotation(Insert.class);
-        if (insertAnnotation != null) method.setType(ParsedMethod.Type.INSERT);
+        if (insertAnnotation != null) {
+            method.setType(ParsedMethod.Type.INSERT);
+            method.setParameterMap(insertAnnotation.parameterMap());
+        }
         Update updateAnnotation = declaration.getAnnotation(Update.class);
-        if (updateAnnotation != null) method.setType(ParsedMethod.Type.UPDATE);
+        if (updateAnnotation != null) {
+            method.setType(ParsedMethod.Type.UPDATE);
+            method.setParameterMap(updateAnnotation.parameterMap());
+        }
 
         // there may also be a result map or cache model floating around
+        ResultMaps resultMapsAnnotation = declaration.getAnnotation(ResultMaps.class);
+        if (resultMapsAnnotation != null) {
+            ResultMap[] resultMaps = resultMapsAnnotation.value();
+            for (ResultMap resultMap : resultMaps) {
+                addResultMapAnnotation(parsedClass, resultMap);
+            }
+        }
+
         ResultMap resultMapAnnotation = declaration.getAnnotation(ResultMap.class);
         if (resultMapAnnotation != null) {
-            ParsedResultMap resultMap = new ParsedResultMap();
-            resultMap.setId(resultMapAnnotation.id());
-            Result[] results = resultMapAnnotation.results();
-            for (Result result : results) {
-                ParsedResult parsedResult = new ParsedResult();
-                parsedResult.setProperty(result.property());
-                parsedResult.setColumn(result.column());
-                parsedResult.setJavaType(result.javaType());
-                parsedResult.setJdbcType(result.jdbcType());
-                parsedResult.setNullValue(result.nullValue());
-                resultMap.getResults().add(parsedResult);
-            }
-            parsedClass.getResultMaps().add(resultMap);
+            addResultMapAnnotation(parsedClass, resultMapAnnotation);
         }
+
+        ParameterMaps parameterMapsAnnotation = declaration.getAnnotation(ParameterMaps.class);
+        if (parameterMapsAnnotation != null) {
+            ParameterMap[] parameterMaps = parameterMapsAnnotation.value();
+            for (ParameterMap parameterMap : parameterMaps) {
+                addParameterMapAnnotation(parsedClass, parameterMap);
+            }
+        }
+
+        ParameterMap parameterMapAnnotation = declaration.getAnnotation(ParameterMap.class);
+        if (parameterMapAnnotation != null) {
+            addParameterMapAnnotation(parsedClass, parameterMapAnnotation);
+        }
+
+        CacheModels cacheModelsAnnotation = declaration.getAnnotation(CacheModels.class);
+        if (cacheModelsAnnotation != null) {
+            CacheModel[] cacheModels = cacheModelsAnnotation.value();
+            for (CacheModel cacheModel : cacheModels) {
+                addCacheModelAnnoataion(parsedClass, cacheModel);
+            }
+        }
+
         CacheModel cacheModelAnnotation = declaration.getAnnotation(CacheModel.class);
         if (cacheModelAnnotation != null) {
-            ParsedCacheModel cacheModel = new ParsedCacheModel();
-            cacheModel.setId(cacheModelAnnotation.id());
-            cacheModel.setType(cacheModelAnnotation.type());
-            cacheModel.setFlushIntervalHours(cacheModelAnnotation.flushIntervalHours());
-            parsedClass.getCacheModels().add(cacheModel);
+            addCacheModelAnnoataion(parsedClass, cacheModelAnnotation);
         }
+
         Result resultAnnotation = declaration.getAnnotation(Result.class);
         if (resultAnnotation != null) {
             messager.printError(declaration.getPosition(), "incorrectly placed @Result");
@@ -316,6 +405,47 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         }
 
         return method;
+    }
+
+    private void addResultMapAnnotation(ParsedClass parsedClass, ResultMap resultMapAnnotation) {
+        ParsedResultMap resultMap = new ParsedResultMap();
+        resultMap.setId(resultMapAnnotation.id());
+        Result[] results = resultMapAnnotation.results();
+        for (Result result : results) {
+            ParsedResult parsedResult = new ParsedResult();
+            parsedResult.setProperty(result.property());
+            parsedResult.setColumn(result.column());
+            parsedResult.setJavaType(result.javaType());
+            parsedResult.setJdbcType(result.jdbcType());
+            parsedResult.setNullValue(result.nullValue());
+            resultMap.getResults().add(parsedResult);
+        }
+        parsedClass.getResultMaps().add(resultMap);
+    }
+
+    private void addParameterMapAnnotation(ParsedClass parsedClass, ParameterMap parameterMapAnnotation) {
+        ParsedParameterMap parameterMap = new ParsedParameterMap();
+        parameterMap.setId(parameterMapAnnotation.id());
+        parameterMap.setJavaClass(parameterMapAnnotation.classFor());
+        Parameter[] parameters = parameterMapAnnotation.parameters();
+        for (Parameter parameter : parameters) {
+            ParsedParameter parsedParameter = new ParsedParameter();
+            parsedParameter.setProperty(parameter.property());
+            parsedParameter.setJavaType(parameter.javaType());
+            parsedParameter.setJdbcType(parameter.jdbcType());
+            parsedParameter.setNullValue(parameter.nullValue());
+            parsedParameter.setMode(parameter.mode());
+            parameterMap.getParameters().add(parsedParameter);
+        }
+        parsedClass.getParameterMaps().add(parameterMap);
+    }
+
+    private void addCacheModelAnnoataion(ParsedClass parsedClass, CacheModel cacheModelAnnotation) {
+        ParsedCacheModel cacheModel = new ParsedCacheModel();
+        cacheModel.setId(cacheModelAnnotation.id());
+        cacheModel.setType(cacheModelAnnotation.type());
+        cacheModel.setFlushIntervalHours(cacheModelAnnotation.flushIntervalHours());
+        parsedClass.getCacheModels().add(cacheModel);
     }
 
     /**

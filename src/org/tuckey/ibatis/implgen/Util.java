@@ -98,7 +98,7 @@ public class Util {
      * Quick and dirty logger (so that we don't have to have log4j in classpath)
      */
     public static class Log {
-        private boolean debugEnabled = true;
+        private boolean debugEnabled = false;
 
         public void debug(String s) {
             if (!debugEnabled) return;

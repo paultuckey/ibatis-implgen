@@ -53,7 +53,10 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     private String returnsType;
     private String cacheModel;
     private String resultMap;
+    private String parameterMap;
     private Type type;
+    private String alternativeThrowsClass;
+    private ParsedClass belongsToClass;
 
     private int line;
     private int column;
@@ -158,6 +161,10 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
         return resultMap != null && resultMap.length() > 0;
     }
 
+    public boolean isAnyParameterMap() {
+        return parameterMap != null && parameterMap.length() > 0;
+    }
+
     public boolean isAnyResultClass() {
         return !isAnyResultMap() && !isReturnsVoid();
     }
@@ -210,4 +217,31 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
         return sql != null && sql.length() > 0;
     }
 
+    public boolean isAlternativeThrows() {
+        return alternativeThrowsClass != null;
+    }
+
+    public String getAlternativeThrowsClass() {
+        return alternativeThrowsClass;
+    }
+
+    public void setAlternativeThrowsClass(String alternativeThrowsClass) {
+        this.alternativeThrowsClass = alternativeThrowsClass;
+    }
+
+    public boolean isOkToOutputInImplClass() {
+        return belongsToClass.isClassAnInterface() || isSqlMethod();
+    }
+
+    public void setBelongsToClass(ParsedClass belongsToClass) {
+        this.belongsToClass = belongsToClass;
+    }
+
+    public String getParameterMap() {
+        return parameterMap;
+    }
+
+    public void setParameterMap(String parameterMap) {
+        this.parameterMap = parameterMap;
+    }
 }
