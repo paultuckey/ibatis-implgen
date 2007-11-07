@@ -42,4 +42,7 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface Insert {
+
+    String parameterMap() default "";
+
 }

@@ -45,5 +45,7 @@ public @interface Procedure {
 
     String resultMap() default "";
 
+    String parameterMap() default "";
+
     String cacheModel() default "";
 }

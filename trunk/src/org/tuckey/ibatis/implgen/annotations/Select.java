@@ -45,5 +45,7 @@ public @interface Select {
 
     String resultMap() default "";
 
+    String parameterMap() default "";
+
     String cacheModel() default "";
 }

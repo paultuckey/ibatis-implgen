@@ -45,5 +45,7 @@ public @interface Statement {
 
     String resultMap() default "";
 
+    String parameterMap() default "";
+
     String cacheModel() default "";
 }
