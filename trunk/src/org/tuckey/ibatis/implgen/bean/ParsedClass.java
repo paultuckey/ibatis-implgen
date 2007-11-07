@@ -41,14 +41,16 @@ import java.util.List;
 
 public class ParsedClass {
 
+    private ParsedMethod.Type overrideXmlType;
     private static final String GENERATED_FILE_SUFFIX = "GeneratedSqlMap";
     private String name = "";
     private String packageStr = "";
     private List<ParsedMethod> methods = new ArrayList<ParsedMethod>();
     private List<ParsedCacheModel> cacheModels = new ArrayList<ParsedCacheModel>();
     private List<ParsedResultMap> resultMaps = new ArrayList<ParsedResultMap>();
+    private List<ParsedParameterMap> parameterMaps = new ArrayList<ParsedParameterMap>();
     private File classFile;
-    private boolean classIsInterface;
+    private boolean classAnInterface;
 
     public String getName() {
         return name;
@@ -87,7 +89,7 @@ public class ParsedClass {
     }
 
     public String getGeneratedXmlFilePath() {
-        return getFullyQualifiedName().replace('.', '/') + '/' + getGeneratedXmlFileName();
+        return getPackageStr().replace('.', '/') + '/' + getGeneratedXmlFileName();
     }
 
     public String getGeneratedJavaClassName() {
@@ -106,12 +108,8 @@ public class ParsedClass {
         return resultMaps;
     }
 
-    public String getImplementsOrExtends() {
-        return classIsInterface ? "implements" : "extends";
-    }
-
-    public void setClassIsInterface(boolean classIsInterface) {
-        this.classIsInterface = classIsInterface;
+    public void setClassAnInterface(boolean classAnInterface) {
+        this.classAnInterface = classAnInterface;
     }
 
     public boolean isAnySQLMethods() {
@@ -120,4 +118,22 @@ public class ParsedClass {
         }
         return false;
     }
+
+    public ParsedMethod.Type getOverrideXmlType() {
+        return overrideXmlType;
+    }
+
+    public void setOverrideXmlType(ParsedMethod.Type overrideXmlType) {
+        this.overrideXmlType = overrideXmlType;
+    }
+
+    public boolean isClassAnInterface() {
+        return classAnInterface;
+    }
+
+    public List<ParsedParameterMap> getParameterMaps() {
+        return parameterMaps;
+    }
 }
+
+

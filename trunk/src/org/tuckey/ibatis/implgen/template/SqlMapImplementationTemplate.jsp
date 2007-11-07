@@ -1,14 +1,13 @@
-<%@ page import="org.tuckey.ibatis.implgen.*" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParam" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedMethod" %>
+<%@ page import="org.tuckey.ibatis.implgen.bean.*" %>
 <%! public ParsedClass parsedClass; %>
 
 package <%= parsedClass.getPackageStr() %>;
 
+import com.ibatis.dao.client.DaoManager;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import com.ibatis.common.resources.Resources;
+import com.ibatis.dao.client.template.SqlMapDaoTemplate;
 
 import java.util.HashMap;
 import java.sql.SQLException;
@@ -26,29 +25,26 @@ import java.io.IOException;
  *
  * @see <%= parsedClass.getFullyQualifiedName() %>
  */
-public class <%= parsedClass.getGeneratedJavaClassName() %> <%= parsedClass.getImplementsOrExtends() %> <%= parsedClass.getName() %> {
+public class <%= parsedClass.getGeneratedJavaClassName() %> extends SqlMapDaoTemplate
+    <%= parsedClass.isClassAnInterface() ? "implements " + parsedClass.getName() : "" %> {
 
-  private static SqlMapClient sqlMapper;
-
-  static {
-    try {
-      Reader reader = Resources.getResourceAsReader("<%= parsedClass.getGeneratedXmlFilePath() %>");
-      sqlMapper = SqlMapClientBuilder.buildSqlMapClient(reader);
-      reader.close();
-    } catch (IOException e) {
-      // Fail fast.
-      throw new RuntimeException("Something bad happened while building the SqlMapClient instance." + e, e);
+    /**
+     * Constructor
+     *
+     * @param daoManager DaoManager
+     */
+    public <%= parsedClass.getGeneratedJavaClassName() %>(DaoManager daoManager) {
+        super(daoManager);
     }
-  }
-
 
 <% for (ParsedMethod method : parsedClass.getMethods()) { %>
+    <% if ( method.isOkToOutputInImplClass() ) { %>
     public <%= method.getReturns() %> <%= method.getName() %>(<%
             int i = 0;
             for (ParsedParam param : method.getParams()) { %><%-- 
                 --%><%= (i > 0 ? ", " : "") %><%= param.getJavaTypeShort() %> <%= param.getName()%><%
                 i++;
-            } %>) throws SQLException {
+            } %>) throws <%= method.isAlternativeThrows() ? method.getAlternativeThrowsClass() : "SQLException" %> {
         <% if ( method.isAnyParameters() ) { %><%--
             --%><% if ( method.isMultipleParameters() ) { %>
         HashMap<String, Object> params = new HashMap<String, Object>();<%--
@@ -57,21 +53,28 @@ public class <%= parsedClass.getGeneratedJavaClassName() %> <%= parsedClass.getI
                 --%><% } %>
             <% } %>
         <% } %>
-
+        <% if ( method.isAlternativeThrows() ) { %>
+            try {
+        <% } %>
         //noinspection unchecked,UnnecessaryLocalVariable
         <% if ( !method.isReturnsVoid() ) { %>
         <%= method.getReturns() %> ret = (<%= method.getReturns() %>)
-        <% } %>
-        <% if ( method.isReturnsList() ) { %>
-        sqlMapper.queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);
-        <% } else { %>
-        sqlMapper.queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);
-        <% } %>
+        <% } %><%--
+        --%><% if ( method.isReturnsList() ) { %><%-- //
+        --%> getSqlMapExecutor().queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> <% } else { %><%--
+        --%> getSqlMapExecutor().queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> <% } %>
         <% if ( !method.isReturnsVoid() ) { %>
         return ret;
         <% } %>
+        <% if ( method.isAlternativeThrows() ) { %>
+            } catch (SQLException e) {
+                throw new <%= method.getAlternativeThrowsClass() %>(e);
+            }
+        <% } %>
     }
-
+    <% } %>
 <% } %>
 
 }
