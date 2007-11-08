@@ -1,18 +1,18 @@
-<%@ page import="org.tuckey.ibatis.implgen.*" %>
+<%@ page import="com.ibatis.sqlmap.implgen.*" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedCacheModel" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedMethod" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResultMap" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResult" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParam" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedCacheModel" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedMethod" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedResultMap" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedClass" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedResult" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedParam" %>
 <%! public ParsedClass parsedClass; %>
 <%! public List allItems; %>
 
 package <%= parsedClass.getPackageStr() %>;
 
 import java.sql.SQLException;
-import org.tuckey.ibatis.implgen.annotations.Procedure; <%-- todo: more types --%>
+import com.ibatis.sqlmap.implgen.annotations.Procedure; <%-- todo: more types --%>
 
 public interface <%= parsedClass.getName() %> {
 

@@ -1,4 +1,6 @@
-<%@ page import="org.tuckey.ibatis.implgen.bean.*" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedClass" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedMethod" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedParam" %>
 <%! public ParsedClass parsedClass; %>
 
 package <%= parsedClass.getPackageStr() %>;
@@ -25,7 +27,7 @@ import java.io.IOException;
  *
  * @see <%= parsedClass.getFullyQualifiedName() %>
  */
-public class <%= parsedClass.getGeneratedJavaClassName() %> extends SqlMapDaoTemplate
+public class <%= parsedClass.getGeneratedJavaClassName() %> extends <%= parsedClass.getForceExtendClass() %>
     <%= parsedClass.isClassAnInterface() ? "implements " + parsedClass.getName() : "" %> {
 
     /**
@@ -46,12 +48,12 @@ public class <%= parsedClass.getGeneratedJavaClassName() %> extends SqlMapDaoTem
                 i++;
             } %>) throws <%= method.isAlternativeThrows() ? method.getAlternativeThrowsClass() : "SQLException" %> {
         <% if ( method.isAnyParameters() ) { %><%--
-            --%><% if ( method.isMultipleParameters() ) { %>
-        HashMap<String, Object> params = new HashMap<String, Object>();<%--
+            --%><% if ( method.isMultipleParameters() ) { %><%--
+        --%> HashMap<String, Object> params = new HashMap<String, Object>();<%--
                 --%><% for (ParsedParam param : method.getParams()) { %>
         params.put("<%= param.getName()%>", <%= param.getName()%>);<%--
-                --%><% } %>
-            <% } %>
+                --%><% } %><%--
+            --%><% } %>
         <% } %>
         <% if ( method.isAlternativeThrows() ) { %>
             try {
@@ -62,6 +64,12 @@ public class <%= parsedClass.getGeneratedJavaClassName() %> extends SqlMapDaoTem
         <% } %><%--
         --%><% if ( method.isReturnsList() ) { %><%-- //
         --%> getSqlMapExecutor().queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> <% } else if (ParsedMethod.Type.UPDATE.equals(method.getType()) ) { %><%--
+        --%> getSqlMapExecutor().update("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> <% } else if (ParsedMethod.Type.INSERT.equals(method.getType()) ) { %><%--
+        --%> getSqlMapExecutor().insert("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> <% } else if (ParsedMethod.Type.DELETE.equals(method.getType()) ) { %><%--
+        --%> getSqlMapExecutor().delete("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else { %><%--
         --%> getSqlMapExecutor().queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } %>
