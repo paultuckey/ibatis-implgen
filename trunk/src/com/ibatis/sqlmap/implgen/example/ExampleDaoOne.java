@@ -1,64 +1,70 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
- * All rights reserved.
- * ====================================================================
- * Licensed under the BSD License. Text as follows.
+ * Copyright 2007 Paul Tuckey
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-package org.tuckey.ibatis.implgen.example;
+package com.ibatis.sqlmap.implgen.example;
 
-import org.tuckey.ibatis.implgen.annotations.CacheModel;
-import org.tuckey.ibatis.implgen.annotations.Delete;
-import org.tuckey.ibatis.implgen.annotations.Procedure;
-import org.tuckey.ibatis.implgen.annotations.Result;
-import org.tuckey.ibatis.implgen.annotations.ResultMap;
-import org.tuckey.ibatis.implgen.annotations.Select;
-import org.tuckey.ibatis.implgen.annotations.Update;
+import com.ibatis.sqlmap.implgen.annotations.CacheModel;
+import com.ibatis.sqlmap.implgen.annotations.CacheModels;
+import com.ibatis.sqlmap.implgen.annotations.Delete;
+import com.ibatis.sqlmap.implgen.annotations.HasSql;
+import com.ibatis.sqlmap.implgen.annotations.Parameter;
+import com.ibatis.sqlmap.implgen.annotations.ParameterMap;
+import com.ibatis.sqlmap.implgen.annotations.ParameterMaps;
+import com.ibatis.sqlmap.implgen.annotations.Procedure;
+import com.ibatis.sqlmap.implgen.annotations.Result;
+import com.ibatis.sqlmap.implgen.annotations.ResultMap;
+import com.ibatis.sqlmap.implgen.annotations.ResultMaps;
+import com.ibatis.sqlmap.implgen.annotations.Select;
+import com.ibatis.sqlmap.implgen.annotations.Update;
 
 import java.sql.SQLException;
 import java.util.List;
 
-
+@HasSql(overrideXmlType = "procedure")
 public interface ExampleDaoOne {
 
+    // ***** parameter maps *************************************
+    @ParameterMaps({
+    @ParameterMap(id = "param-map-1", parameters = {
+    @Parameter(property = "mamber1", mode="INOUT")
+            }
+    )
+            })
+
     // ***** result maps ****************************************
+    @ResultMaps({
 
     @ResultMap(id = "person-result", results = {
     @Result(property = "personId", column = "id", javaType = "Long", jdbcType = "NUMERIC", nullValue = "0"),
     @Result(property = "fullName", column = "name", javaType = "string", jdbcType = "VARCHAR", nullValue = ""),
     @Result(property = "dateOfBirth", column = "dob", javaType = "date", jdbcType = "TIMESTAMP")
+            }),
+    @ResultMap(id = "person-result-obj", results = {
+    @Result(property = "personId", column = "id", javaType = "Long", jdbcType = "NUMERIC", nullValue = "0"),
+    @Result(property = "fullName", column = "name", javaType = "string", jdbcType = "VARCHAR", nullValue = ""),
+    @Result(property = "dateOfBirth", column = "dob", javaType = "date", jdbcType = "TIMESTAMP")
+            })
+
             })
 
     // ***** caches ****************************************
+    @CacheModels({
 
-    @CacheModel(id = "oneDayCache", type="LRU", flushIntervalHours = "24")
+    @CacheModel(id = "oneDayCache", type = "LRU", flushIntervalHours = "24")
+
+            })
 
     // ***** statements ****************************************
 
