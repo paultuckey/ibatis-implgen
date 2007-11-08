@@ -1,38 +1,19 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
- * All rights reserved.
- * ====================================================================
- * Licensed under the BSD License. Text as follows.
+ * Copyright 2007 Paul Tuckey
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
-package org.tuckey.ibatis.implgen;
+package com.ibatis.sqlmap.implgen;
 
 import com.sun.mirror.apt.AnnotationProcessor;
 import com.sun.mirror.apt.AnnotationProcessorEnvironment;
@@ -46,31 +27,31 @@ import com.sun.mirror.declaration.MethodDeclaration;
 import com.sun.mirror.declaration.ParameterDeclaration;
 import com.sun.mirror.declaration.TypeDeclaration;
 import com.sun.mirror.type.ReferenceType;
-import org.tuckey.ibatis.implgen.annotations.CacheModel;
-import org.tuckey.ibatis.implgen.annotations.CacheModels;
-import org.tuckey.ibatis.implgen.annotations.Delete;
-import org.tuckey.ibatis.implgen.annotations.HasSql;
-import org.tuckey.ibatis.implgen.annotations.Insert;
-import org.tuckey.ibatis.implgen.annotations.Parameter;
-import org.tuckey.ibatis.implgen.annotations.ParameterMap;
-import org.tuckey.ibatis.implgen.annotations.ParameterMaps;
-import org.tuckey.ibatis.implgen.annotations.Procedure;
-import org.tuckey.ibatis.implgen.annotations.Result;
-import org.tuckey.ibatis.implgen.annotations.ResultMap;
-import org.tuckey.ibatis.implgen.annotations.ResultMaps;
-import org.tuckey.ibatis.implgen.annotations.Select;
-import org.tuckey.ibatis.implgen.annotations.Statement;
-import org.tuckey.ibatis.implgen.annotations.Update;
-import org.tuckey.ibatis.implgen.bean.ParsedCacheModel;
-import org.tuckey.ibatis.implgen.bean.ParsedClass;
-import org.tuckey.ibatis.implgen.bean.ParsedMethod;
-import org.tuckey.ibatis.implgen.bean.ParsedParam;
-import org.tuckey.ibatis.implgen.bean.ParsedParameter;
-import org.tuckey.ibatis.implgen.bean.ParsedParameterMap;
-import org.tuckey.ibatis.implgen.bean.ParsedResult;
-import org.tuckey.ibatis.implgen.bean.ParsedResultMap;
-import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapImplementationTemplate;
-import org.tuckey.ibatis.implgen.template.generated.GeneratedSqlMapXmlTemplate;
+import com.ibatis.sqlmap.implgen.annotations.CacheModel;
+import com.ibatis.sqlmap.implgen.annotations.CacheModels;
+import com.ibatis.sqlmap.implgen.annotations.Delete;
+import com.ibatis.sqlmap.implgen.annotations.HasSql;
+import com.ibatis.sqlmap.implgen.annotations.Insert;
+import com.ibatis.sqlmap.implgen.annotations.Parameter;
+import com.ibatis.sqlmap.implgen.annotations.ParameterMap;
+import com.ibatis.sqlmap.implgen.annotations.ParameterMaps;
+import com.ibatis.sqlmap.implgen.annotations.Procedure;
+import com.ibatis.sqlmap.implgen.annotations.Result;
+import com.ibatis.sqlmap.implgen.annotations.ResultMap;
+import com.ibatis.sqlmap.implgen.annotations.ResultMaps;
+import com.ibatis.sqlmap.implgen.annotations.Select;
+import com.ibatis.sqlmap.implgen.annotations.Statement;
+import com.ibatis.sqlmap.implgen.annotations.Update;
+import com.ibatis.sqlmap.implgen.bean.ParsedCacheModel;
+import com.ibatis.sqlmap.implgen.bean.ParsedClass;
+import com.ibatis.sqlmap.implgen.bean.ParsedMethod;
+import com.ibatis.sqlmap.implgen.bean.ParsedParam;
+import com.ibatis.sqlmap.implgen.bean.ParsedParameter;
+import com.ibatis.sqlmap.implgen.bean.ParsedParameterMap;
+import com.ibatis.sqlmap.implgen.bean.ParsedResult;
+import com.ibatis.sqlmap.implgen.bean.ParsedResultMap;
+import com.ibatis.sqlmap.implgen.template.generated.GeneratedSqlMapImplementationTemplate;
+import com.ibatis.sqlmap.implgen.template.generated.GeneratedSqlMapXmlTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -94,7 +75,7 @@ import java.util.Set;
  * <p/>
  * todo: method overloading support in interfaces that we generate from
  *
- * @see org.tuckey.ibatis.implgen.example.ExampleDaoOne
+ * @see com.ibatis.sqlmap.implgen.example.ExampleDaoOne
  */
 public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, AnnotationProcessorFactory {
 
@@ -106,10 +87,12 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
     private static final String DEBUG_OPTION = "-Adebug";
     private static final String DAO_SNIPPET_OPTION = "-AoutputDaoSnippet";
     private static final String SQL_MAP_SNIPPET_OPTION = "-AoutputSqlMapSnippet";
+    private static final String SQL_MAP_FORCE_EXTEND_OPTION = "-AforceSqlMapImplsToExtend";
     private static final String START_SQL_INDICATOR = "/*sql{";
 
     private boolean outputDaoSnippet = true;
     private boolean outputSqlMapSnippet = true;
+    private String forceExtendClass = null;
 
     public IbatisImplGenAnnotationProcessor() {
         // empty constructor for apt tool
@@ -124,18 +107,15 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         Map<String, String> options = env.getOptions();
         Set<String> keys = options.keySet();
         for (String key : keys) {
-            if (key.startsWith(DEBUG_OPTION + "=")) {
-                log.setDebug("true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1)));
-            }
-            if (key.startsWith(DAO_SNIPPET_OPTION + "=")) {
-                outputDaoSnippet = "true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1));
-            }
-            if (key.startsWith(SQL_MAP_SNIPPET_OPTION + "=")) {
-                outputSqlMapSnippet = "true".equalsIgnoreCase(key.substring(key.indexOf("=") + 1));
-            }
+            String value = key.substring(key.indexOf("=") + 1);
+            if (key.startsWith(DEBUG_OPTION + "=")) log.setDebug("true".equalsIgnoreCase(value));
+            if (key.startsWith(DAO_SNIPPET_OPTION + "=")) outputDaoSnippet = "true".equalsIgnoreCase(value);
+            if (key.startsWith(SQL_MAP_SNIPPET_OPTION + "=")) outputSqlMapSnippet = "true".equalsIgnoreCase(value);
+            if (key.startsWith(SQL_MAP_FORCE_EXTEND_OPTION + "=")) forceExtendClass = value;
         }
         log.debug("outputDaoSnippet set to " + outputDaoSnippet);
         log.debug("outputSqlMapSnippet set to " + outputSqlMapSnippet);
+        log.debug("forceExtendClass set to " + forceExtendClass);
         try {
 
             HashMap<String, List<ParsedClass>> packages = new HashMap<String, List<ParsedClass>>();
@@ -149,6 +129,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 parsedClass.setPackageStr(typeDecl.getPackage().getQualifiedName());
                 parsedClass.setClassFile(typeDecl.getPosition().file());
                 parsedClass.setClassAnInterface(typeDecl instanceof InterfaceDeclaration);
+                parsedClass.setForceExtendClass(forceExtendClass);
                 log.debug("an interface? " + parsedClass.isClassAnInterface());
 
                 HasSql hasSql = typeDecl.getAnnotation(HasSql.class);
@@ -527,7 +508,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
      * @return a collection containing the annotation names.
      */
     public Collection<String> supportedAnnotationTypes() {
-        return Arrays.asList("org.tuckey.ibatis.implgen.*");
+        return Arrays.asList("com.ibatis.sqlmap.implgen.*");
     }
 
     public Collection<String> supportedOptions() {
