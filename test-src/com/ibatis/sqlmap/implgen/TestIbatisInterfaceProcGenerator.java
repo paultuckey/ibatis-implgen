@@ -1,4 +1,4 @@
-package org.tuckey.ibatis.implgen;
+package com.ibatis.sqlmap.implgen;
 
 import junit.framework.TestCase;
 
