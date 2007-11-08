@@ -40,7 +40,7 @@
     <target name="generate-example" depends="dist" description="Generated implementations of example Dao">
         <apt srcdir="src" preprocessdir="build/generated"
              classpathref="annotation-classpath" compile="false" debug="true"
-             factory="org.tuckey.ibatis.implgen.IbatisImplGenAnnotationProcessor"
+             factory="com.ibatis.sqlmap.implgen.IbatisImplGenAnnotationProcessor"
              includes="**/example/*">
             <option name="debug" value="true"/>
             <option name="outputDaoSnippet" value="true"/>
