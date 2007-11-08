@@ -1,5 +1,5 @@
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParam" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedProc" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedParam" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedProc" %>
 <%!
     public ParsedProc[] procs;
     public String name;

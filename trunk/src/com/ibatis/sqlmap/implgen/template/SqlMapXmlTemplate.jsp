@@ -4,14 +4,14 @@
     PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
     "http://ibatis.apache.org/dtd/sql-map-2.dtd">
 
-<%@ page import="org.tuckey.ibatis.implgen.Util" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedCacheModel" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedClass" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedMethod" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParameter" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedParameterMap" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResult" %>
-<%@ page import="org.tuckey.ibatis.implgen.bean.ParsedResultMap" %>
+<%@ page import="com.ibatis.sqlmap.implgen.Util" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedCacheModel" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedClass" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedMethod" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedParameter" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedParameterMap" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedResult" %>
+<%@ page import="com.ibatis.sqlmap.implgen.bean.ParsedResultMap" %>
 <%! public ParsedClass parsedClass; %>
 
 <!--
