@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.ibatis.implgen;
+package com.ibatis.sqlmap.implgen;
 
 import java.util.regex.Pattern;
 
