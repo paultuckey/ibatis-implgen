@@ -21,7 +21,6 @@ import java.util.List;
 
 public class ParsedParameterMap {
     private String id;
-    private String extendsMap;
     private String javaClass;
     private List<ParsedParameter> parameters = new ArrayList<ParsedParameter>();
 
@@ -37,14 +36,6 @@ public class ParsedParameterMap {
         this.id = id;
     }
 
-    public String getExtendsMap() {
-        return extendsMap;
-    }
-
-    public void setExtendsMap(String extendsMap) {
-        this.extendsMap = extendsMap;
-    }
-
     public List<ParsedParameter> getParameters() {
         return parameters;
     }
@@ -57,14 +48,9 @@ public class ParsedParameterMap {
         this.javaClass = javaClass;
     }
 
-    public boolean isAnyExtendsMap() {
-        return extendsMap != null && extendsMap.length() > 0;
-    }
-
     public String toString() {
         return "ParsedResultMap{" +
                 "id='" + id + '\'' +
-                ", extendsMap='" + extendsMap + '\'' +
                 ", javaClass='" + javaClass + '\'' +
                 ", parameters=" + parameters +
                 '}';

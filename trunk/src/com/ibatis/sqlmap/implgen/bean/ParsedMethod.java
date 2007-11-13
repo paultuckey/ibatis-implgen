@@ -22,6 +22,13 @@ import java.util.List;
 
 
 public class ParsedMethod implements Comparable<ParsedMethod> {
+    public boolean isThrows() {
+        return false;
+    }
+
+    public String getThrowsClass() {
+        return isAlternativeThrows() ? alternativeThrowsClass : "SQLException";
+    }
 
     public enum Type {
         SELECT, STATEMENT, INSERT, UPDATE, DELETE, PROCEDURE
@@ -80,6 +87,11 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
 
     public Type getType() {
         return type;
+    }
+
+    public Type getTypeOrOverriden() {
+        return belongsToClass != null && belongsToClass.getOverrideXmlType() != null ?
+                belongsToClass.getOverrideXmlType() : type; 
     }
 
     public void setType(Type type) {
@@ -199,7 +211,7 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     }
 
     public boolean isAlternativeThrows() {
-        return alternativeThrowsClass != null;
+        return alternativeThrowsClass != null && 1 == 2; // todo: fix this
     }
 
     public String getAlternativeThrowsClass() {
