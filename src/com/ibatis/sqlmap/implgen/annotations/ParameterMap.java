@@ -21,7 +21,5 @@ public @interface ParameterMap {
 
     String classFor() default "";
 
-    String extendsMap() default "";
-
     Parameter[] parameters();
 }

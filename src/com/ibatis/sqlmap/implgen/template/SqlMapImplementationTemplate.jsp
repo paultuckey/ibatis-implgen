@@ -46,32 +46,32 @@ public class <%= parsedClass.getGeneratedJavaClassName() %> extends <%= parsedCl
             for (ParsedParam param : method.getParams()) { %><%-- 
                 --%><%= (i > 0 ? ", " : "") %><%= param.getJavaTypeShort() %> <%= param.getName()%><%
                 i++;
-            } %>) throws <%= method.isAlternativeThrows() ? method.getAlternativeThrowsClass() : "SQLException" %> {
+            } %>) <%= method.isThrows() ? "throws " + method.getThrowsClass() : "" %> {
         <% if ( method.isAnyParameters() ) { %><%--
             --%><% if ( method.isMultipleParameters() ) { %><%--
-        --%> HashMap<String, Object> params = new HashMap<String, Object>();<%--
+                --%>HashMap<String, Object> params = new HashMap<String, Object>();<%--
                 --%><% for (ParsedParam param : method.getParams()) { %>
         params.put("<%= param.getName()%>", <%= param.getName()%>);<%--
                 --%><% } %><%--
-            --%><% } %>
-        <% } %>
+            --%><% } %><%--
+        --%><% } %>
         <% if ( method.isAlternativeThrows() ) { %>
             try {
         <% } %>
         //noinspection unchecked,UnnecessaryLocalVariable
-        <% if ( !method.isReturnsVoid() ) { %>
-        <%= method.getReturns() %> ret = (<%= method.getReturns() %>)
-        <% } %><%--
+        <% if ( !method.isReturnsVoid() ) { %><%--
+        --%><%= method.getReturns() %> ret = (<%= method.getReturns() %>)<%--
+        --%><% } %><%--
         --%><% if ( method.isReturnsList() ) { %><%-- //
-        --%> getSqlMapExecutor().queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else if (ParsedMethod.Type.UPDATE.equals(method.getType()) ) { %><%--
-        --%> getSqlMapExecutor().update("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> update("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else if (ParsedMethod.Type.INSERT.equals(method.getType()) ) { %><%--
-        --%> getSqlMapExecutor().insert("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> insert("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else if (ParsedMethod.Type.DELETE.equals(method.getType()) ) { %><%--
-        --%> getSqlMapExecutor().delete("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> delete("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else { %><%--
-        --%> getSqlMapExecutor().queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } %>
         <% if ( !method.isReturnsVoid() ) { %>
         return ret;

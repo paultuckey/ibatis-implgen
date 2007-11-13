@@ -33,8 +33,7 @@
     <% } %>
 
     <% for (ParsedParameterMap parameterMap : parsedClass.getParameterMaps()) { %>
-    <parameterMap id="<%= parameterMap.getId() %>" class="<%= parameterMap.getJavaClass() %>" <%--
-            --%><% if ( parameterMap.isAnyExtendsMap() ) { %> extends="<%= parameterMap.getExtendsMap() %>" <% } %> ><%--
+    <parameterMap id="<%= parameterMap.getId() %>" class="<%= parameterMap.getJavaClass() %>"><%--
         --%><% for (ParsedParameter result : parameterMap.getParameters()) { %>
         <parameter property="<%= result.getProperty() %>" <%--
                 --%><% if ( !Util.empty(result.getJavaType()) ) { %> javaType="<%= result.getJavaType() %>" <% } %><%--
@@ -63,7 +62,7 @@
 
 
     <% for (ParsedMethod method : parsedClass.getMethods()) { %>
-        <% if ( ParsedMethod.Type.SELECT.equals(method.getType()) ) { %>
+        <% if ( ParsedMethod.Type.SELECT.equals(method.getTypeOrOverriden()) ) { %>
     <select id="<%= method.getName() %>" <%--
             --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
             --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
@@ -73,28 +72,28 @@
         <%= method.getSqlEscaped() %>
     </select>
 
-        <% } else if ( ParsedMethod.Type.UPDATE.equals(method.getType()) ) { %>
+        <% } else if ( ParsedMethod.Type.UPDATE.equals(method.getTypeOrOverriden()) ) { %>
     <update id="<%= method.getName() %>" <%--
                --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
                 --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </update>
 
-        <% } else if ( ParsedMethod.Type.DELETE.equals(method.getType()) ) { %>
+        <% } else if ( ParsedMethod.Type.DELETE.equals(method.getTypeOrOverriden()) ) { %>
     <delete id="<%= method.getName() %>" <%--
             --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>   >
         <%= method.getSqlEscaped() %>
     </delete>
 
-        <% } else if ( ParsedMethod.Type.INSERT.equals(method.getType()) ) { %>
+        <% } else if ( ParsedMethod.Type.INSERT.equals(method.getTypeOrOverriden()) ) { %>
     <insert id="<%= method.getName() %>" <%--
             --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </insert>
 
-        <% } else if ( ParsedMethod.Type.PROCEDURE.equals(method.getType()) ) { %>
+        <% } else if ( ParsedMethod.Type.PROCEDURE.equals(method.getTypeOrOverriden()) ) { %>
     <procedure id="<%= method.getName() %>" <%--
                --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
                --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
