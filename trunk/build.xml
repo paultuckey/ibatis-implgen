@@ -1,6 +1,6 @@
 <project name="ibatis-implgen" default="dist" basedir=".">
 
-    <property name="app.version" value="0.0.2"/>
+    <property name="app.version" value="0.0.3"/>
 
     <path id="compile.classpath">
         <fileset dir="lib/" includes="*.jar"/>
