@@ -45,9 +45,9 @@ public class Util {
     }
 
     public static String trimToNull(String s) {
-        if ( s == null ) return null;
+        if (s == null) return null;
         s = s.trim();
-        if ( s.length() == 0 ) return null;
+        if (s.length() == 0) return null;
         return s;
     }
 
@@ -98,30 +98,43 @@ public class Util {
      * Quick and dirty logger (so that we don't have to have log4j in classpath)
      */
     public static class Log {
-        private boolean debugEnabled = false;
-
-        public void debug(String s) {
-            if (!debugEnabled) return;
-            System.out.println("DEBUG: " + s);
-        }
+        // level: 0 none, 1 error, 2 warn, 3 info, 4 debug
+        private short DEFAULT_LEVEL = 3;
+        private short level = DEFAULT_LEVEL;
 
         public void error(String s) {
+            if (level < 1) return;
             System.out.println("ERROR: " + s);
         }
 
         public void error(Object o) {
-            if ( o!= null ) error(o.toString());
+            if (level < 1) return;
+            if (o != null) error(o.toString());
+        }
+
+        public void warn(String s) {
+            if (level < 2) return;
+            System.out.println("WARN: " + s);
         }
 
         public void info(String s) {
-            System.out.println("INFO: " + s);
+            if (level < 3) return;
+            System.out.println(s);
+        }
+
+        public void debug(String s) {
+            if (level < 4) return;
+            System.out.println("DEBUG: " + s);
         }
 
         public void setDebug(boolean b) {
-            debugEnabled = b;
+            level = b ? 4 : DEFAULT_LEVEL;
+        }
+
+        public void setLevel(short s) {
+            level = s;
         }
     }
-
 
 
 }
