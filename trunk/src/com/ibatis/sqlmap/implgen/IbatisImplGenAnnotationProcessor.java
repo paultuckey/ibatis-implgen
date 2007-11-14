@@ -113,6 +113,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
             if (key.startsWith(SQL_MAP_SNIPPET_OPTION + "=")) outputSqlMapSnippet = "true".equalsIgnoreCase(value);
             if (key.startsWith(SQL_MAP_FORCE_EXTEND_OPTION + "=")) forceExtendClass = value;
         }
+        log.info("Starting " + IbatisImplGenAnnotationProcessor.class.getSimpleName());
         log.debug("outputDaoSnippet set to " + outputDaoSnippet);
         log.debug("outputSqlMapSnippet set to " + outputSqlMapSnippet);
         log.debug("forceExtendClass set to " + forceExtendClass);
@@ -122,6 +123,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
 
             for (TypeDeclaration typeDecl : env.getSpecifiedTypeDeclarations()) {
                 log.debug("processing type " + typeDecl);
+                int sqlMethodCount = 0;
 
                 // collect info on the class
                 ParsedClass parsedClass = new ParsedClass();
@@ -172,12 +174,16 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                     processPost(parsedClass, method, nextMethod);
                     if (method.isSqlMethod()) {
                         parsedClass.getMethods().add(method);
+                        sqlMethodCount++;
                     }
                     posIdx++;
                 }
 
                 // output files for the class
-                if (parsedClass.isAnySQLMethods()) processClass(parsedClass);
+                if (parsedClass.isAnySQLMethods()) {
+                    log.info("Parsed " + parsedClass.getMethods().size() + " SQL methods from " + parsedClass.getFullyQualifiedName());
+                    processClass(parsedClass);
+                }
 
                 List<ParsedClass> classList = packages.get(typeDecl.getPackage().getQualifiedName());
                 if (classList == null) {
@@ -200,6 +206,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                                 "implementation=\"" + parsedClass.getGeneratedJavaClassFullyQualifiedName() + "\"/>");
                     }
                     daoXmlFileWriter.close();
+                    log.info("wrote GeneratedDaoSnippet.xml");
                 }
             }
             if (outputSqlMapSnippet) {
@@ -214,9 +221,11 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                         sqlMapXmlFileWriter.println("<sqlMap resource=\"" + parsedClass.getGeneratedXmlFilePath() + "\"/>");
                     }
                     sqlMapXmlFileWriter.close();
+                    log.info("wrote GeneratedSqlMapSnippet.xml");
                 }
             }
 
+            log.info("done");
         } catch (IOException e) {
             messager.printError(e.getMessage());
             e.printStackTrace(System.err);
@@ -235,7 +244,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
             ParsedMethod.Type type = guessType(sql);
             if (type != null) {
                 method.setType(type);
-                log.info("detected type " + type);
+                log.debug("detected type " + type);
             }
         }
 
@@ -267,11 +276,13 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         GeneratedSqlMapXmlTemplate mapXmlTemplate = new GeneratedSqlMapXmlTemplate();
         mapXmlTemplate.parsedClass = parsedClass;
         mapXmlTemplate.write(xmlFileWriter);
+        log.info("wrote " + parsedClass.getGeneratedXmlFileName());
 
         PrintWriter mapClassWriter = env.getFiler().createSourceFile(parsedClass.getGeneratedJavaClassFullyQualifiedName());
         GeneratedSqlMapImplementationTemplate mapClassTemplate = new GeneratedSqlMapImplementationTemplate();
         mapClassTemplate.parsedClass = parsedClass;
         mapClassTemplate.write(mapClassWriter);
+        log.info("wrote " + parsedClass.getGeneratedJavaClassName() + ".java");
     }
 
 
@@ -482,7 +493,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
             sql.delete(sql.length() - 1, sql.length());
         }
         if (sql.length() > 0) {
-            log.info("SQL: " + sql);
+            log.debug("SQL: " + sql);
         }
         return sql;
     }
