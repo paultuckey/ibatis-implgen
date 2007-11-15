@@ -22,13 +22,6 @@ import java.util.List;
 
 
 public class ParsedMethod implements Comparable<ParsedMethod> {
-    public boolean isThrows() {
-        return false;
-    }
-
-    public String getThrowsClass() {
-        return isAlternativeThrows() ? alternativeThrowsClass : "SQLException";
-    }
 
     public enum Type {
         SELECT, STATEMENT, INSERT, UPDATE, DELETE, PROCEDURE
@@ -91,7 +84,7 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
 
     public Type getTypeOrOverriden() {
         return belongsToClass != null && belongsToClass.getOverrideXmlType() != null ?
-                belongsToClass.getOverrideXmlType() : type; 
+                belongsToClass.getOverrideXmlType() : type;
     }
 
     public void setType(Type type) {
@@ -166,30 +159,6 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
         return params.size() > 0;
     }
 
-    public String toString() {
-        return "ParsedMethod{" +
-                "name='" + name + '\'' +
-                ", sql='" + sql + '\'' +
-                ", params=" + params +
-                ", returns='" + returns + '\'' +
-                ", returnsType='" + returnsType + '\'' +
-                ", cacheModel='" + cacheModel + '\'' +
-                ", resultMap='" + resultMap + '\'' +
-                ", type=" + type +
-                ", line=" + line +
-                ", column=" + column +
-                '}';
-    }
-
-    public int compareTo(ParsedMethod other) {
-        int result = 0;
-        if (line > other.line) result = 1;
-        else if (line < other.line) result = -1;
-        else if (column > other.column) result = 1;
-        else if (column < other.column) result = -1;
-        return result;
-    }
-
     public int getLine() {
         return line;
     }
@@ -237,4 +206,49 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     public void setParameterMap(String parameterMap) {
         this.parameterMap = parameterMap;
     }
+
+    public boolean isThrows() {
+        return false;
+    }
+
+    public String getThrowsClass() {
+        return isAlternativeThrows() ? alternativeThrowsClass : "SQLException";
+    }
+
+    public static Type findType(String typeString) {
+        if (typeString == null) return null;
+        if (typeString.equalsIgnoreCase("delete")) return ParsedMethod.Type.DELETE;
+        if (typeString.equalsIgnoreCase("insert")) return ParsedMethod.Type.INSERT;
+        if (typeString.equalsIgnoreCase("procedure")) return ParsedMethod.Type.PROCEDURE;
+        if (typeString.equalsIgnoreCase("select")) return ParsedMethod.Type.SELECT;
+        if (typeString.equalsIgnoreCase("statement")) return ParsedMethod.Type.STATEMENT;
+        if (typeString.equalsIgnoreCase("update")) return ParsedMethod.Type.UPDATE;
+        return null;
+    }
+
+    public String toString() {
+        return "ParsedMethod{" +
+                "name='" + name + '\'' +
+                ", sql='" + sql + '\'' +
+                ", params=" + params +
+                ", returns='" + returns + '\'' +
+                ", returnsType='" + returnsType + '\'' +
+                ", cacheModel='" + cacheModel + '\'' +
+                ", resultMap='" + resultMap + '\'' +
+                ", type=" + type +
+                ", line=" + line +
+                ", column=" + column +
+                '}';
+    }
+
+    public int compareTo(ParsedMethod other) {
+        int result = 0;
+        if (line > other.line) result = 1;
+        else if (line < other.line) result = -1;
+        else if (column > other.column) result = 1;
+        else if (column < other.column) result = -1;
+        return result;
+    }
+
+
 }

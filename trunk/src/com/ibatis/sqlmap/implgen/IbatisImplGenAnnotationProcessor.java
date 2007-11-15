@@ -123,7 +123,6 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
 
             for (TypeDeclaration typeDecl : env.getSpecifiedTypeDeclarations()) {
                 log.debug("processing type " + typeDecl);
-                int sqlMethodCount = 0;
 
                 // collect info on the class
                 ParsedClass parsedClass = new ParsedClass();
@@ -136,22 +135,12 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
 
                 HasSql hasSql = typeDecl.getAnnotation(HasSql.class);
                 if (hasSql != null && hasSql.overrideXmlType() != null) {
-                    if (hasSql.overrideXmlType().equalsIgnoreCase("delete"))
-                        parsedClass.setOverrideXmlType(ParsedMethod.Type.DELETE);
-                    else if (hasSql.overrideXmlType().equalsIgnoreCase("insert"))
-                        parsedClass.setOverrideXmlType(ParsedMethod.Type.INSERT);
-                    else if (hasSql.overrideXmlType().equalsIgnoreCase("procedure"))
-                        parsedClass.setOverrideXmlType(ParsedMethod.Type.PROCEDURE);
-                    else if (hasSql.overrideXmlType().equalsIgnoreCase("select"))
-                        parsedClass.setOverrideXmlType(ParsedMethod.Type.SELECT);
-                    else if (hasSql.overrideXmlType().equalsIgnoreCase("statement"))
-                        parsedClass.setOverrideXmlType(ParsedMethod.Type.STATEMENT);
-                    else if (hasSql.overrideXmlType().equalsIgnoreCase("update"))
-                        parsedClass.setOverrideXmlType(ParsedMethod.Type.UPDATE);
+                    parsedClass.setOverrideXmlType(ParsedMethod.findType(hasSql.overrideXmlType()));
                     if (parsedClass.getOverrideXmlType() != null) {
                         log.debug("got overrideXmlType " + parsedClass.getOverrideXmlType());
                     }   else {
-                        log.error("could not find type for overrideXmlType '" + hasSql.overrideXmlType() + "'");
+                        messager.printError(typeDecl.getPosition(),
+                                "could not find type for overrideXmlType '" + hasSql.overrideXmlType() + "'");
                     }
                 }
 
@@ -174,7 +163,6 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                     processPost(parsedClass, method, nextMethod);
                     if (method.isSqlMethod()) {
                         parsedClass.getMethods().add(method);
-                        sqlMethodCount++;
                     }
                     posIdx++;
                 }
@@ -276,13 +264,14 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         GeneratedSqlMapXmlTemplate mapXmlTemplate = new GeneratedSqlMapXmlTemplate();
         mapXmlTemplate.parsedClass = parsedClass;
         mapXmlTemplate.write(xmlFileWriter);
-        log.info("wrote " + parsedClass.getGeneratedXmlFileName());
 
         PrintWriter mapClassWriter = env.getFiler().createSourceFile(parsedClass.getGeneratedJavaClassFullyQualifiedName());
         GeneratedSqlMapImplementationTemplate mapClassTemplate = new GeneratedSqlMapImplementationTemplate();
         mapClassTemplate.parsedClass = parsedClass;
         mapClassTemplate.write(mapClassWriter);
-        log.info("wrote " + parsedClass.getGeneratedJavaClassName() + ".java");
+
+        log.info("wrote " + parsedClass.getGeneratedXmlFileName() + " and " +
+                parsedClass.getGeneratedJavaClassName() + ".java");
     }
 
 
