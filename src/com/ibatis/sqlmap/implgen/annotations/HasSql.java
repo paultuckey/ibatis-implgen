@@ -20,10 +20,25 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to denote that a class contains SQL methods.
+ */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface HasSql {
 
-    String overrideXmlType() default "";
+    public enum Type {
+        SELECT, STATEMENT, INSERT, UPDATE, DELETE, PROCEDURE, DEFAULT
+    }
+
+    /**
+     * Force all SQL methods in this class to have the type specified in the generated XML file.
+     */
+    Type xmlType() default Type.DEFAULT;
+
+    /**
+     * The generated class will extend the class specified here.
+     */
+    Class extend() default java.lang.Void.class;
 
 }
