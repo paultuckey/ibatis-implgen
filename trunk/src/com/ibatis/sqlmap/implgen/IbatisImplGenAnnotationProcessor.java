@@ -15,18 +15,6 @@
  */
 package com.ibatis.sqlmap.implgen;
 
-import com.sun.mirror.apt.AnnotationProcessor;
-import com.sun.mirror.apt.AnnotationProcessorEnvironment;
-import com.sun.mirror.apt.AnnotationProcessorFactory;
-import com.sun.mirror.apt.AnnotationProcessors;
-import com.sun.mirror.apt.Filer;
-import com.sun.mirror.apt.Messager;
-import com.sun.mirror.declaration.AnnotationTypeDeclaration;
-import com.sun.mirror.declaration.InterfaceDeclaration;
-import com.sun.mirror.declaration.MethodDeclaration;
-import com.sun.mirror.declaration.ParameterDeclaration;
-import com.sun.mirror.declaration.TypeDeclaration;
-import com.sun.mirror.type.ReferenceType;
 import com.ibatis.sqlmap.implgen.annotations.CacheModel;
 import com.ibatis.sqlmap.implgen.annotations.CacheModels;
 import com.ibatis.sqlmap.implgen.annotations.Delete;
@@ -52,6 +40,20 @@ import com.ibatis.sqlmap.implgen.bean.ParsedResult;
 import com.ibatis.sqlmap.implgen.bean.ParsedResultMap;
 import com.ibatis.sqlmap.implgen.template.generated.GeneratedSqlMapImplementationTemplate;
 import com.ibatis.sqlmap.implgen.template.generated.GeneratedSqlMapXmlTemplate;
+import com.sun.mirror.apt.AnnotationProcessor;
+import com.sun.mirror.apt.AnnotationProcessorEnvironment;
+import com.sun.mirror.apt.AnnotationProcessorFactory;
+import com.sun.mirror.apt.AnnotationProcessors;
+import com.sun.mirror.apt.Filer;
+import com.sun.mirror.apt.Messager;
+import com.sun.mirror.declaration.AnnotationTypeDeclaration;
+import com.sun.mirror.declaration.InterfaceDeclaration;
+import com.sun.mirror.declaration.MethodDeclaration;
+import com.sun.mirror.declaration.ParameterDeclaration;
+import com.sun.mirror.declaration.TypeDeclaration;
+import com.sun.mirror.type.MirroredTypeException;
+import com.sun.mirror.type.ReferenceType;
+import com.sun.mirror.type.TypeMirror;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -134,13 +136,24 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                 log.debug("an interface? " + parsedClass.isClassAnInterface());
 
                 HasSql hasSql = typeDecl.getAnnotation(HasSql.class);
-                if (hasSql != null && hasSql.overrideXmlType() != null) {
-                    parsedClass.setOverrideXmlType(ParsedMethod.findType(hasSql.overrideXmlType()));
-                    if (parsedClass.getOverrideXmlType() != null) {
-                        log.debug("got overrideXmlType " + parsedClass.getOverrideXmlType());
-                    }   else {
-                        messager.printError(typeDecl.getPosition(),
-                                "could not find type for overrideXmlType '" + hasSql.overrideXmlType() + "'");
+                if (hasSql != null) {
+                    if (hasSql.xmlType() != null) {
+                        parsedClass.setOverrideXmlType(ParsedMethod.findType(hasSql.xmlType()));
+                        if (parsedClass.getOverrideXmlType() != null) {
+                            log.debug("got overrideXmlType " + parsedClass.getOverrideXmlType());
+                        } else {
+                            messager.printError(typeDecl.getPosition(),
+                                    "could not find type for overrideXmlType '" + hasSql.xmlType() + "'");
+                        }
+                    }
+                    // this is a bit dirty but the only real way to handle specifying Class as an annotation menber 
+                    try {
+                        hasSql.extend();
+                    } catch (MirroredTypeException e) {
+                        TypeMirror typeMirror = e.getTypeMirror();
+                        if (typeMirror != null) {
+                            parsedClass.setForceExtendClass(typeMirror.toString());
+                        }
                     }
                 }
 

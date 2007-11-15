@@ -32,7 +32,7 @@ import com.ibatis.sqlmap.implgen.annotations.Update;
 import java.sql.SQLException;
 import java.util.List;
 
-@HasSql(overrideXmlType = "procedure")
+@HasSql
 public interface ExampleDaoOne {
 
     // ***** parameter maps *************************************

@@ -16,6 +16,7 @@
 package com.ibatis.sqlmap.implgen.bean;
 
 import com.ibatis.sqlmap.implgen.Util;
+import com.ibatis.sqlmap.implgen.annotations.HasSql;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,15 +216,17 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
         return isAlternativeThrows() ? alternativeThrowsClass : "SQLException";
     }
 
-    public static Type findType(String typeString) {
-        if (typeString == null) return null;
-        if (typeString.equalsIgnoreCase("delete")) return ParsedMethod.Type.DELETE;
-        if (typeString.equalsIgnoreCase("insert")) return ParsedMethod.Type.INSERT;
-        if (typeString.equalsIgnoreCase("procedure")) return ParsedMethod.Type.PROCEDURE;
-        if (typeString.equalsIgnoreCase("select")) return ParsedMethod.Type.SELECT;
-        if (typeString.equalsIgnoreCase("statement")) return ParsedMethod.Type.STATEMENT;
-        if (typeString.equalsIgnoreCase("update")) return ParsedMethod.Type.UPDATE;
-        return null;
+    public static Type findType(HasSql.Type type) {
+        if (type == null) return null;
+        switch(type) {
+            case DELETE: return ParsedMethod.Type.DELETE;
+            case INSERT: return ParsedMethod.Type.INSERT;
+            case PROCEDURE: return ParsedMethod.Type.PROCEDURE;
+            case SELECT: return ParsedMethod.Type.SELECT;
+            case STATEMENT: return ParsedMethod.Type.STATEMENT;
+            case UPDATE: return ParsedMethod.Type.UPDATE;
+            default: return null;
+        }
     }
 
     public String toString() {
