@@ -404,6 +404,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
     private void addResultMapAnnotation(ParsedClass parsedClass, ResultMap resultMapAnnotation) {
         ParsedResultMap resultMap = new ParsedResultMap();
         resultMap.setId(resultMapAnnotation.id());
+        resultMap.setExtendsMap(resultMapAnnotation.extendsMap());
         Result[] results = resultMapAnnotation.results();
         for (Result result : results) {
             ParsedResult parsedResult = new ParsedResult();
