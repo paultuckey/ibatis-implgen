@@ -65,6 +65,7 @@
         <% if ( ParsedMethod.Type.SELECT.equals(method.getTypeOrOverriden()) ) { %>
     <select id="<%= method.getName() %>" <%--
             --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
+            --%><% if ( method.isAnyResultSetType() ) { %> resultSetType="<%= method.getResultSetType() %>" <% } %><%--
             --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
             --%><% if ( method.isAnyResultMap() ) { %> resultMap="<%= method.getResultMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--

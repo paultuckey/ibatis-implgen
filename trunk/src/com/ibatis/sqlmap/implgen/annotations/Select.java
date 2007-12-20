@@ -29,4 +29,6 @@ public @interface Select {
     String parameterMap() default "";
 
     String cacheModel() default "";
+
+    String resultSetType() default ""; 
 }
