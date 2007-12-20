@@ -303,6 +303,7 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
         Select selectAnnotation = declaration.getAnnotation(Select.class);
         if (selectAnnotation != null) {
             method.setType(ParsedMethod.Type.SELECT);
+            method.setResultSetType(selectAnnotation.resultSetType());
             method.setCacheModel(selectAnnotation.cacheModel());
             method.setResultMap(selectAnnotation.resultMap());
             method.setParameterMap(selectAnnotation.parameterMap());
