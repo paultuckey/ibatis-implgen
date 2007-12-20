@@ -36,6 +36,7 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     private String cacheModel;
     private String resultMap;
     private String parameterMap;
+    private String resultSetType;
     private Type type;
     private String alternativeThrowsClass;
     private ParsedClass belongsToClass;
@@ -214,6 +215,18 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
 
     public String getThrowsClass() {
         return isAlternativeThrows() ? alternativeThrowsClass : "SQLException";
+    }
+
+    public boolean isAnyResultSetType() {
+        return resultSetType != null && resultSetType.length() > 0;
+    }
+
+    public String getResultSetType() {
+        return resultSetType;
+    }
+
+    public void setResultSetType(String resultSetType) {
+        this.resultSetType = resultSetType;
     }
 
     public static Type findType(HasSql.Type type) {
