@@ -40,9 +40,18 @@ public class ParsedMethod implements Comparable<ParsedMethod> {
     private Type type;
     private String alternativeThrowsClass;
     private ParsedClass belongsToClass;
+    private boolean useIdInIbatisId = false;
 
     private int line;
     private int column;
+
+    public String getIdForIbatis() {
+        return useIdInIbatisId ? name + line : name;
+    }
+
+    public void setUseIdInIbatisId(boolean useIdInIbatisId) {
+        this.useIdInIbatisId = useIdInIbatisId;
+    }
 
     public String getName() {
         return name;

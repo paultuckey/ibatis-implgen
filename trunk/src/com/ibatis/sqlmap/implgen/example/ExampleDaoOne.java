@@ -111,6 +111,18 @@ public interface ExampleDaoOne {
 
     }*/;
 
+    /**
+     * Check method overloading.
+     */
+    @Select(resultMap = "person-result")
+    public List<Person> getListOfPeople(String name) throws SQLException /*sql{
+
+        select name, dob, id
+        from table_of_names
+        where name like #name:VARCHAR#
+
+    }*/;
+
 
     @Procedure
     public void myProc(String name, Long id) throws SQLException /*sql{

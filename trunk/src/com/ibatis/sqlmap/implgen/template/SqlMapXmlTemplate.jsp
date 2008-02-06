@@ -63,7 +63,7 @@
 
     <% for (ParsedMethod method : parsedClass.getMethods()) { %>
         <% if ( ParsedMethod.Type.SELECT.equals(method.getTypeOrOverriden()) ) { %>
-    <select id="<%= method.getName() %>" <%--
+    <select id="<%= method.getIdForIbatis() %>" <%--
             --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
             --%><% if ( method.isAnyResultSetType() ) { %> resultSetType="<%= method.getResultSetType() %>" <% } %><%--
             --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
@@ -74,28 +74,28 @@
     </select>
 
         <% } else if ( ParsedMethod.Type.UPDATE.equals(method.getTypeOrOverriden()) ) { %>
-    <update id="<%= method.getName() %>" <%--
+    <update id="<%= method.getIdForIbatis() %>" <%--
                --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
                 --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </update>
 
         <% } else if ( ParsedMethod.Type.DELETE.equals(method.getTypeOrOverriden()) ) { %>
-    <delete id="<%= method.getName() %>" <%--
+    <delete id="<%= method.getIdForIbatis() %>" <%--
             --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>   >
         <%= method.getSqlEscaped() %>
     </delete>
 
         <% } else if ( ParsedMethod.Type.INSERT.equals(method.getTypeOrOverriden()) ) { %>
-    <insert id="<%= method.getName() %>" <%--
+    <insert id="<%= method.getIdForIbatis() %>" <%--
             --%><% if ( method.isAnyParameterMap() ) { %> parameterMap="<%= method.getParameterMap() %>" <% } %><%--
             --%><% if ( method.isAnyParameters() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %>  >
         <%= method.getSqlEscaped() %>
     </insert>
 
         <% } else if ( ParsedMethod.Type.PROCEDURE.equals(method.getTypeOrOverriden()) ) { %>
-    <procedure id="<%= method.getName() %>" <%--
+    <procedure id="<%= method.getIdForIbatis() %>" <%--
                --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
                --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
                --%><% if ( method.isAnyResultMap() ) { %> resultMap="<%= method.getResultMap() %>" <% } %><%--
@@ -105,7 +105,7 @@
     </procedure>
 
         <% } else { // ParsedMethod.Type.STATEMENT %>
-    <statement id="<%= method.getName() %>" <%--
+    <statement id="<%= method.getIdForIbatis() %>" <%--
            --%><% if ( method.isAnyParameterClass() ) { %> parameterClass="<%= method.getParameterClass() %>" <% } %><%--
            --%><% if ( method.isAnyCacheModel() ) { %> cacheModel="<%= method.getCacheModel() %>" <% } %><%--
            --%><% if ( method.isAnyResultMap() ) { %> resultMap="<%= method.getResultMap() %>" <% } %><%--
