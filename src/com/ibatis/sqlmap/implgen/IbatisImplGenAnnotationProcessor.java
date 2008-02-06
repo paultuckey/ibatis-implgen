@@ -141,12 +141,9 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
                         parsedClass.setOverrideXmlType(ParsedMethod.findType(hasSql.xmlType()));
                         if (parsedClass.getOverrideXmlType() != null) {
                             log.debug("got overrideXmlType " + parsedClass.getOverrideXmlType());
-                        } else {
-                            messager.printError(typeDecl.getPosition(),
-                                    "could not find type for overrideXmlType '" + hasSql.xmlType() + "'");
                         }
                     }
-                    // this is a bit dirty but the only real way to handle specifying Class as an annotation menber 
+                    // this is a bit dirty but the only real way to handle specifying Class as an annotation menber
                     try {
                         hasSql.extend();
                     } catch (MirroredTypeException e) {
@@ -169,12 +166,19 @@ public class IbatisImplGenAnnotationProcessor implements AnnotationProcessor, An
 
                 // process all methods in the class
                 int posIdx = 0;
+                Set<String> methodNames = new HashSet<String>();
                 for (ParsedMethod method : rawMethods) {
                     log.debug("processing method " + method);
                     ParsedMethod nextMethod = posIdx + 1 >= rawMethods.size() ? null : rawMethods.get(posIdx + 1);
                     log.debug("next method " + nextMethod);
                     processPost(parsedClass, method, nextMethod);
                     if (method.isSqlMethod()) {
+                        if ( methodNames.contains(method.getName())) {
+                            method.setUseIdInIbatisId(true);
+                        }   else {
+                            methodNames.add(method.getName());
+                        }
+
                         parsedClass.getMethods().add(method);
                     }
                     posIdx++;

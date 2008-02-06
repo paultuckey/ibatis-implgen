@@ -63,15 +63,15 @@ public class <%= parsedClass.getGeneratedJavaClassName() %> extends <%= parsedCl
         --%><%= method.getReturns() %> ret = (<%= method.getReturns() %>)<%--
         --%><% } %><%--
         --%><% if ( method.isReturnsList() ) { %><%-- //
-        --%> queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> queryForList("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getIdForIbatis() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else if (ParsedMethod.Type.UPDATE.equals(method.getType()) ) { %><%--
-        --%> update("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> update("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getIdForIbatis() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else if (ParsedMethod.Type.INSERT.equals(method.getType()) ) { %><%--
-        --%> insert("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> insert("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getIdForIbatis() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else if (ParsedMethod.Type.DELETE.equals(method.getType()) ) { %><%--
-        --%> delete("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> delete("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getIdForIbatis() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } else { %><%--
-        --%> queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getName() %>", <%= method.getParamsVarName() %>);<%--
+        --%> queryForObject("<%= parsedClass.getFullyQualifiedName() %>.<%= method.getIdForIbatis() %>", <%= method.getParamsVarName() %>);<%--
         --%> <% } %>
         <% if ( !method.isReturnsVoid() ) { %>
         return ret;
