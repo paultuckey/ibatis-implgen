@@ -2,20 +2,6 @@
 
 = Simplify the use SQL in Java =
 
-A typical J2EE web application developer needs the following skills:
-  * CSS
-  * JavaScript
-  * HTML
-  * JSP Expression Language (EL)
-  * JSTL (probably plus many other taglibs)
-  * MVC Framework (struts etc)
-  * Java
-  * Persistence Framework
-  * SQL
-
-This is not exactly a short list. It would be goot to try and reduce this
-(and not create a new language or framework in the process)
-
 == Requirements: ==
 
   * Ability to easily cut and paste SQL into "proper" sql development tool (Toad, Embarcadero etc).
@@ -28,7 +14,5 @@ This is not exactly a short list. It would be goot to try and reduce this
 
 Use stored procedures or functions. This creates a very clear definition between teams.
 The Java team can maintain the calls to the procs and the SQL team the procs themselves.
-
-
 
 
