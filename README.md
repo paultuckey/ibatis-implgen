@@ -42,5 +42,5 @@ The APT processor can be called via the APT ant task:
     </target>
     
     
-    See the wiki for more info
-    https://github.com/paultuckey/ibatis-implgen/tree/wiki
+See the wiki for more info
+https://github.com/paultuckey/ibatis-implgen/tree/wiki
