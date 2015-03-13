@@ -1,0 +1,72 @@
+# Annotation Based iBATIS configuration #
+
+  * Generate iBATIS xml file and implementation class from an annotated java interface or abstract class
+  * Migration code for existing XML SqlMap config files
+
+
+This example is self-explanatory.
+
+
+```
+    // ***** result maps ****************************************
+
+    @ResultMap(id = "person-result", results = {
+        @Result(property = "personId", column = "id", javaType = "Long", jdbcType = "NUMERIC", nullValue = "0"),
+        @Result(property = "fullName", column = "name", javaType = "string", jdbcType = "VARCHAR", nullValue = ""),
+        @Result(property = "dateOfBirth", column = "dob", javaType = "date", jdbcType = "TIMESTAMP")
+    })
+
+    // ***** caches ****************************************
+
+    @CacheModel(id = "oneDayCache", type="LRU", flushIntervalHours = "24")
+
+    // ***** statements ****************************************
+
+    /**
+     * Sample update stetement
+     */
+    @Update
+    public void updateName(int id, String name) throws SQLException /*sql{
+
+        update table_of_names set name = #name:VARCHAR# where id = #id:NUMERIC#
+
+    }*/;
+
+    @Select
+    public List<String> getListOfNames() throws SQLException /*sql{
+
+        select name
+        from table_of_names
+
+    }*/;
+
+
+    @Select(cacheModel = "oneDayCache")
+    public List<String> getListOfCoutries() throws SQLException /*sql{
+
+        select name
+        from countries
+
+    }*/;
+
+```
+
+
+
+# SQL Detection #
+
+Code with no annotation can be specified.  The SQL is parsed and whatever SQL keyword it begins starts with, the type will be automatically set (note, the default is Statement if the detection routine cannot detect a type).
+
+```
+    public List<String> getNames(Long id) throws SQLException /*sql{
+
+        SELECT name FROM blah WHERE id = #id#
+
+    }*/;
+
+    public void updateSomeTable(Long id, String colValue) throws SQLException /*sql{
+
+        UPDATE table SET col = #colValue# WHERE id = #id#
+
+    }*/;
+```
